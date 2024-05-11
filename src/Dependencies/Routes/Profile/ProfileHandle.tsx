@@ -6,6 +6,7 @@ import Register from './Dependencies/AccountHandle/Register.tsx'
 export default function ProfileHandle()
 {
     const [logged, setLogged] = useState(false)
+
     return(
         <section className="ml-[10vw] w-[90vw]">
             {!logged ? (

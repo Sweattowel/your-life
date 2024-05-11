@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
+
 export default function Post() {
     const params = useParams();
     const navigate = useNavigate()
@@ -20,18 +21,22 @@ export default function Post() {
 
     const totalPages = Math.ceil(comments.length / commentsPerPage);
 
-    const handlePrevPage = () => {
-        const newPage = Math.max(1, page - 1);
-        setPage(newPage);
-        navigate(`/posts/user/${params.userID}/postID/${params.postID}/picture/${encodeURIComponent(`${params.picture}`)}/page/${newPage}`);
-        
-    };
+    class handlePagination
+    {
+        static handlePrevPage = () => {
+            const newPage = Math.max(1, page - 1);
+            setPage(newPage);
+            navigate(`/posts/user/${params.userID}/postID/${params.postID}/picture/${encodeURIComponent(`${params.picture}`)}/page/${newPage}`);
+            
+        };
 
-    const handleNextPage = () => {
-        const newPage = Math.min(totalPages, page + 1);
-        setPage(newPage);
-        navigate(`/posts/user/${params.userID}/postID/${params.postID}/picture/${encodeURIComponent(`${params.picture}`)}/page/${newPage}`);
-    };
+        static handleNextPage = () => {
+            const newPage = Math.min(totalPages, page + 1);
+            setPage(newPage);
+            navigate(`/posts/user/${params.userID}/postID/${params.postID}/picture/${encodeURIComponent(`${params.picture}`)}/page/${newPage}`);
+        };        
+    }
+
 
     return (
         <section className="ml-[10vw] w-[89vw] h-full flex flex-col items-center ">
@@ -60,9 +65,9 @@ export default function Post() {
                     </div>
                 ))}
                 <div className="flex justify-between mt-4 p-1">
-                    <button className="hover:font-bold hover:cursor-pointer" onClick={handlePrevPage} disabled={page === 1}>Previous</button>
+                    <button className="hover:font-bold hover:cursor-pointer" onClick={handlePagination.handlePrevPage} disabled={page === 1}>Previous</button>
                     <span>{page} / {totalPages}</span>
-                    <button className="hover:font-bold hover:cursor-pointer" onClick={handleNextPage} disabled={page === totalPages}>Next</button>
+                    <button className="hover:font-bold hover:cursor-pointer" onClick={handlePagination.handleNextPage} disabled={page === totalPages}>Next</button>
                 </div>
             </section>
         </section>

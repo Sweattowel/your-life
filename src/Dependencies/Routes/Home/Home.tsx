@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+
 const placeHolderPosts = [
     {
         title: 'PlaceHolder',
@@ -34,13 +36,47 @@ const placeHolderPosts = [
 export default function Home()
 {
     const [wantCommentID, setWantCommentID] = useState(-1)
+    const [posts, setPosts] = useState(placeHolderPosts)
+    const server = process.env.REACT_APP_SERVER_ADDRESS
 
+    class handlePosts
+    {
+        static async getPosts() {
+            try {
+                const response = await axios.post(`${server}/api/getPosts`, 
+                {
+                    UserID: -1,
+                    PostID: -1
+                })
+                switch (response.status) {
+                    case 200:
+                        setPosts(response.data)
+                        break;
+                    case 404:
+                        setPosts([])
+                        console.log('No posts')
+                        break;
+                    default:
+                        setPosts([])
+                        console.log('Failed to get posts NOT EMPTY')
+                        break;
+                }
 
+            } catch (error) {
+                setPosts([])
+                console.log('Failed to get posts NOT EMPTY')
+            }            
+        }
 
+    }
+
+    useEffect(() => {
+        handlePosts.getPosts;
+    },[])
     return(
         <section className="ml-[10vw] w-[85vw] h-full flex flex-col justify-evenly">
 
-            {placeHolderPosts.map((post, index) => (
+            {posts.map((post, index) => (
                 <div key={index} className="w-[80%] m-auto flex flex-col justify-center items-center shadow-lg mt-5 mb-5 rounded-lg bg-HIGHLIGHTB">
                     <h1 className="flex border-b text-[1.25rem] w-[80%] text-center justify-evenly items-center bg-WHITE mt-1 rounded-t">
                         <h2>
