@@ -326,7 +326,7 @@ namespace Server.Controllers
                         if (rowsAffected > 0){
                             return Ok("Post made");
                         } else {
-                            return StatusCode(500, 'Allied mastermind AM ergo therefore i AM!')
+                            return StatusCode(500, "Allied mastermind AM ergo therefore i AM!");
                         }
                     }
                 }
