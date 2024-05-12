@@ -111,7 +111,7 @@ namespace Server.Controllers
         public IFormFile pictureFile { get; set; }
         public int likeCount { get; set; }
         public int dislikeCount { get; set; }
-        public List comments { get; set;}
+        public List<comment> comments { get; set;}
         public string userName { get; set;}
         public int userID { get; set;}
         public int postID { get; set;}
@@ -192,7 +192,7 @@ namespace Server.Controllers
     [Route("/api/getPosts")]
     [ApiController]
 
-    public class GetPosts : ControllerBase
+    public class handlePosts : ControllerBase
     {
         [HttpGet]
         public async Task<ActionResult<Post>> GetPosts([fromBody] options option)
