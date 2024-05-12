@@ -127,7 +127,7 @@ namespace Server.Controllers
     {
         public string userPicture { get; set; }
         public string userName { get; set; }
-        public string comment { get; set; }
+        public string commentstring { get; set; }
         public int likeCount { get; set; }
         public int dislikeCount { get; set; }
     }
@@ -178,7 +178,7 @@ namespace Server.Controllers
                             {
                                 userPicture = reader.GetString(reader.GetOrdinal("userPicture")),
                                 userName = reader.GetString(reader.GetOrdinal("userName")),
-                                comment = reader.GetString(reader.GetOrdinal("comment")),
+                                commentstring = reader.GetString(reader.GetOrdinal("comment")),
                                 likeCount = reader.GetInt32(reader.GetOrdinal("likeCount")),
                                 dislikeCount = reader.GetInt32(reader.GetOrdinal("dislikeCount"))
                             };
