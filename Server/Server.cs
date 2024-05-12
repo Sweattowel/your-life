@@ -258,7 +258,7 @@ namespace Server.Controllers
                                 userID = reader.GetInt32(reader.GetOrdinal("userID")),
                                 postID = reader.GetInt32(reader.GetOrdinal("postID")),                             
                             };
-                            item.comments = await handleComments.getComments(new Options { UserID: option.UserID, PostID: option.PostID });
+                            item.comments = await handleComments.getComments(option.UserID, option.PostID);
                             Posts.Add(item);
                         }
                         reader.Close();
