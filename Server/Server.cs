@@ -136,7 +136,7 @@ namespace Server.Controllers
         public int UserID { get; set; }
         public int PostID { get; set; }
     }
-    public class handleComments
+    public class handlePassComments
     {
         [Route("/api/getComments")]
         [ApiController]
@@ -144,7 +144,7 @@ namespace Server.Controllers
         {
             try
             {
-                List comments = await getComments(option.UserID, option.PostID);
+                List comments = await handleComments.getComments(option.UserID, option.PostID);
                 return Ok(comments);
             }
             catch (System.Exception)
@@ -152,7 +152,11 @@ namespace Server.Controllers
                 Console.WriteLine("Failed to get comments");
                 return StatusCode(500, "Internal Server Error");
             }
-        }
+        }        
+    }
+    public class handleComments
+    {
+
         public async Task<List<comment>> getComments(int userID, int postID)
         {
             try
@@ -202,7 +206,7 @@ namespace Server.Controllers
     public class handlePosts : ControllerBase
     {
         [HttpGet]
-        public async Task<ActionResult<Post>> GetPosts([fromBody] options option)
+        public async Task<ActionResult<Post>> GetPosts([FromBody] options option)
         {
             try
             {
