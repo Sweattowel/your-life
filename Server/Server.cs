@@ -279,7 +279,7 @@ namespace Server.Controllers
     [ApiController]
     public class handleCreatePost : ControllerBase
     {                 
-        private class CreateItemRequest
+        public class CreateItemRequest
         {
             public string title { get; set; }
             public string message { get; set; }
