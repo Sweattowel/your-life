@@ -312,7 +312,6 @@ namespace Server.Controllers
                     using (MySqlCommand command = new MySqlCommand(queryStatement, connection))
                     {
                         connection.Open();
-                        command.Parameters.AddWithValue("@comments", []);
                         command.Parameters.AddWithValue("@message", createItemRequest.message);
                         command.Parameters.AddWithValue("@picture", fullPath);
                         command.Parameters.AddWithValue("@title", createItemRequest.title);
