@@ -169,16 +169,15 @@ namespace Server.Controllers
                         {
                             comment comment = new comment
                             {
-                                userPicture = reader.GetString(reader.GetOrdinal("userPicture"));
-                                userName = reader.GetString(reader.GetOrdinal("userName"));
-                                comment = reader.GetString(reader.GetOrdinal("comment"));
-                                likeCount = reader.GetInt32(reader.GetOrdinal("likeCount"));
-                                dislikeCount = reader.GetInt32(reader.GetOrdinal("dislikeCount"));
-                            }
+                                userPicture = reader.GetString(reader.GetOrdinal("userPicture")),
+                                userName = reader.GetString(reader.GetOrdinal("userName")),
+                                comment = reader.GetString(reader.GetOrdinal("comment")),
+                                likeCount = reader.GetInt32(reader.GetOrdinal("likeCount")),
+                                dislikeCount = reader.GetInt32(reader.GetOrdinal("dislikeCount"))
+                            };
                             comments.Add(comment);
                         }
                         reader.Close();
-
                     }
                 }
                 return comments;                
@@ -222,11 +221,11 @@ namespace Server.Controllers
                 {
                     using (MySqlCommand command = new MySqlCommand(postStatement, connection))
                     {
-                        if (option.UserID !== -1 && option.PostID == -1) 
+                        if (option.UserID != -1 && option.PostID == -1) 
                         {
                             command.Parameters.AddWithValue("@PostID", option.UserID);
                         }
-                        else if (option.UserID == -1 && option.PostID !== -1)
+                        else if (option.UserID == -1 && option.PostID != -1)
                         {
                             command.Parameters.AddWithValue("@UserID", option.PostID);
                         }
