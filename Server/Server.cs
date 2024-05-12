@@ -235,7 +235,7 @@ namespace Server.Controllers
                     {
                         if (option.UserID != -1 && option.PostID == -1) 
                         {
-                            command.Parameters.AddWithValue("@PostID", option.PostID});
+                            command.Parameters.AddWithValue("@PostID", option.PostID);
                         }
                         else if (option.UserID == -1 && option.PostID != -1)
                         {
