@@ -262,7 +262,7 @@ namespace Server.Controllers
                                 postID = reader.GetInt32(reader.GetOrdinal("postID")),                             
                             };
                             item.comments = await commentsHandler.getComments(option.UserID, option.PostID);
-                            Posts.Add(item)
+                            Posts.Add(item);
                         }
                         reader.Close();
                     }
