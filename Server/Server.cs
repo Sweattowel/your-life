@@ -140,11 +140,11 @@ namespace Server.Controllers
     public class handlePassComments : ControllerBase
     {
         [HttpPost]        
-        public async Task<ActionResult<List<comment>>> fetchComments([FromBody] Options option )
+        public async Task<ActionResult<List<comment>>> fetchComments([FromBody] Options option)
         {
             try
             {
-                List<comment> comments = await handleComments.getComments({ UserID: option.UserID, PostID: option.PostID });
+                List<comment> comments = await handleComments.getComments(option.UserID, option.PostID);
                 return Ok(comments);
             }
             catch (System.Exception)
