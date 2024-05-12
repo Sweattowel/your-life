@@ -144,7 +144,7 @@ namespace Server.Controllers
         {
             try
             {
-                List comments<comment> = await handleComments.getComments(new Options { UserID = option.UserID, PostID = option.PostID });
+                List comments<comment> = await handleComments.getComments(new Options { UserID: option.UserID, PostID: option.PostID });
                 return Ok(comments);
             }
             catch (System.Exception)
