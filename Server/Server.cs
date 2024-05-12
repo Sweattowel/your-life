@@ -307,12 +307,14 @@ namespace Server.Controllers
                 }
                 string queryStatement = "INSERT INTO POSTS (title, message, picture, likeCount, dislikeCount, userName, userID, postID) VALUES (@title, @message, @picture, 0, 0, @userName, @userID, @postID)";
                 string connectionString = ConnectionString.GetConnectionString();
-
+                Console.WriteLine(queryStatement, connectionString)
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     using (MySqlCommand command = new MySqlCommand(queryStatement, connection))
                     {
                         connection.Open();
+                        Console.WriteLine('Connection Open with params', createItemRequest.message, fullPath, createItemRequest.title, createItemRequest.userID, createItemRequest.userName)
+
                         command.Parameters.AddWithValue("@message", createItemRequest.message);
                         command.Parameters.AddWithValue("@picture", fullPath);
                         command.Parameters.AddWithValue("@title", createItemRequest.title);
@@ -323,8 +325,6 @@ namespace Server.Controllers
 
                         if (rowsAffected > 0){
                             return Ok("Post made");
-                        } else {
-                            return StatusCode(500, "Failed to create post");
                         }
                     }
                 }
