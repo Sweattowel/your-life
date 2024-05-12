@@ -54,7 +54,7 @@ export default function ProfileDetails()
     }
 
     useEffect(() => {
-        handlePosts.getPosts;
+        handlePosts.getPosts();
     },[])
     
     return(

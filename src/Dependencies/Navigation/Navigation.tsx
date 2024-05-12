@@ -19,7 +19,7 @@ export default function Navigation() {
       </h1>
       <ul>
         {links.map((link, index) => (
-          <li>
+          <li key={index}>
             <Link className={`${location.pathname === link.path ? `text-HIGHLIGHTA bg-WHITE` : 'text-WHITE bg-HIGHLIGHTA'} flex w-full justify-center`} to={`${link.path}`}>
               {link.name}
             </Link>

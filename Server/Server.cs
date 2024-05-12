@@ -206,7 +206,7 @@ namespace Server.Controllers
     public class handlePosts : ControllerBase
     {
         [HttpPost]
-        public async Task<ActionResult<Post>> GetPosts([FromBody] Options option)
+        public async Task<ActionResult<Post>> GetPosts([FromForm] CreateItemRequest createItemRequest)
         {
             try
             {
@@ -278,23 +278,31 @@ namespace Server.Controllers
     [Route("/api/createPost")]
     [ApiController]
     public class handleCreatePost : ControllerBase
-    {         
+    {                 
+        private class CreateItemRequest
+        {
+            public string title { get; set; }
+            public string message { get; set; }
+            public IFormFile Picture { get; set; }
+            public int userID { get; set; }
+            public string userName { get; set; }
+        }  
         private string GetFileExtension(string fileName)
         {
             return Path.GetExtension(fileName).TrimStart('.');
         }
         [HttpPost]
-        public async Task<ActionResult> createPost([FromBody] Post post)
+        public async Task<ActionResult> createPost([FromForm] CreateItemRequest createItemRequest)
         {
             try
             {
-                string extension = Path.GetExtension(post.pictureFile.FileName);
-                string imageFileName = $"{Guid.NewGuid()}.{GetFileExtension(post.pictureFile.FileName)}";
+                string extension = Path.GetExtension(createItemRequest.Picture..FileName);
+                string imageFileName = $"{Guid.NewGuid()}.{GetFileExtension(createItemRequest.Picture.FileName)}";
                 string imagePath = Path.Combine("images", imageFileName);
                 string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "images", imageFileName);
                 using (var stream = new FileStream(fullPath, FileMode.Create))
                 {
-                    await post.pictureFile.CopyToAsync(stream);
+                    await createItemRequest.Picture..CopyToAsync(stream);
                 }
                 string queryStatement = "INSERT INTO POSTS (title, message, picture, likeCount, disLikeCount, userName, userID, postID) VALUES (@title, @message, @picture, 0, 0, @userName, @userID, @postID)";
                 string connectionString = ConnectionString.GetConnectionString();
@@ -304,15 +312,12 @@ namespace Server.Controllers
                     using (MySqlCommand command = new MySqlCommand(queryStatement, connection))
                     {
                         connection.Open();
-                        command.Parameters.AddWithValue("@comments", post.comments);
-                        command.Parameters.AddWithValue("@dislikeCount", post.dislikeCount);
-                        command.Parameters.AddWithValue("@likeCount", post.likeCount);
-                        command.Parameters.AddWithValue("@message", post.message);
+                        command.Parameters.AddWithValue("@comments", []);
+                        command.Parameters.AddWithValue("@message", createItemRequest.message);
                         command.Parameters.AddWithValue("@picture", fullPath);
-                        command.Parameters.AddWithValue("@postID", post.postID);
-                        command.Parameters.AddWithValue("@title", post.title);
-                        command.Parameters.AddWithValue("@userID", post.userID);
-                        command.Parameters.AddWithValue("@userName", post.userName);
+                        command.Parameters.AddWithValue("@title", createItemRequest.title);
+                        command.Parameters.AddWithValue("@userID", createItemRequest.userID);
+                        command.Parameters.AddWithValue("@userName", createItemRequest.userName);
 
                         int rowsAffected = await command.ExecuteNonQueryAsync();
 

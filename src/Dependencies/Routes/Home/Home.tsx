@@ -71,14 +71,14 @@ export default function Home()
     }
 
     useEffect(() => {
-        handlePosts.getPosts;
+        handlePosts.getPosts();
     },[])
     return(
         <section className="ml-[10vw] w-[85vw] h-full flex flex-col justify-evenly">
 
             {posts.map((post, index) => (
                 <div key={index} className="w-[80%] m-auto flex flex-col justify-center items-center shadow-lg mt-5 mb-5 rounded-lg bg-HIGHLIGHTB">
-                    <h1 className="flex border-b text-[1.25rem] w-[80%] text-center justify-evenly items-center bg-WHITE mt-1 rounded-t">
+                    <div className="flex border-b text-[1.25rem] w-[80%] text-center justify-evenly items-center bg-WHITE mt-1 rounded-t">
                         <h2>
                             {post.title} by {post.userName}                             
                         </h2>
@@ -86,7 +86,7 @@ export default function Home()
                             to={`/posts/user/${post.userID}/postID/${post.postID}/picture/${encodeURIComponent(post.picture)}/page/1`}>
                             Open Post
                         </Link>
-                    </h1>
+                    </div>
                     <p className="shadow-inner shadow-lg h-full w-[80%] text-center mb-1 bg-WHITE rounded-b max-h-[10rem]">
                         {post.message}
                     </p>
