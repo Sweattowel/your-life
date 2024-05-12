@@ -144,7 +144,7 @@ namespace Server.Controllers
         {
             try
             {
-                List<comment> comments = await handleComments.getComments(new Options { userID = option.UserID, postID = option.PostID });
+                List<comment> comments = await handleComments.getComments(new Options { UserID = option.UserID, PostID = option.PostID });
                 return Ok(comments);
             }
             catch (System.Exception)
@@ -156,7 +156,7 @@ namespace Server.Controllers
     }
     public class handleComments
     {
-        public async Task<List<comment>> getComments(int userID, int postID)
+        public async Task<List<comment>> getComments(int UserID, int PostID)
         {
             try
             {
@@ -169,8 +169,8 @@ namespace Server.Controllers
                 {
                     using (MySqlCommand command = new MySqlCommand(commentStatement, connection))
                     {
-                        command.Parameters.AddWithValue("@PostID", postID);
-                        command.Parameters.AddWithValue("@UserID", userID);
+                        command.Parameters.AddWithValue("@PostID", PostID);
+                        command.Parameters.AddWithValue("@UserID", UserID);
 
                         connection.Open();
                         MySqlDataReader reader = command.ExecuteReader();
@@ -258,7 +258,7 @@ namespace Server.Controllers
                                 userID = reader.GetInt32(reader.GetOrdinal("userID")),
                                 postID = reader.GetInt32(reader.GetOrdinal("postID")),                             
                             };
-                            item.comments = await handleComments.getComments(new Options { userID = option.UserID, postID = option.PostID });
+                            item.comments = await handleComments.getComments(new Options { UserID = option.UserID, PostID = option.PostID });
                             Posts.Add(item);
                         }
                         reader.Close();
