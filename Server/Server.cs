@@ -264,10 +264,9 @@ namespace Server.Controllers
                             Posts.Add(item);
                         }
                         reader.Close();
-                        return Ok(Posts);
                     }
-
                 }
+                return Ok(Posts);
             }
             catch (Exception ex)
             {
