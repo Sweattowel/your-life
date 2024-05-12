@@ -136,10 +136,12 @@ namespace Server.Controllers
         public int UserID { get; set; }
         public int PostID { get; set; }
     }
+
+    [Route("/api/getComments")]
+    [ApiController]    
     public class handlePassComments
     {
-        [Route("/api/getComments")]
-        [ApiController]
+        [HttpPost]        
         public async Task<ActionResult<comment>> fetchComments([FromBody] options option )
         {
             try
@@ -156,7 +158,6 @@ namespace Server.Controllers
     }
     public class handleComments
     {
-
         public async Task<List<comment>> getComments(int userID, int postID)
         {
             try
@@ -205,7 +206,7 @@ namespace Server.Controllers
 
     public class handlePosts : ControllerBase
     {
-        [HttpGet]
+        [HttpPost]
         public async Task<ActionResult<Post>> GetPosts([FromBody] options option)
         {
             try
@@ -278,6 +279,7 @@ namespace Server.Controllers
     [ApiController]
     public class handleCreatePost
     { 
+        [HttpPost]
         static async Task<ActionResult> createPost([FromBody] Post post)
         {
             try
