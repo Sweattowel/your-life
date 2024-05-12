@@ -144,7 +144,7 @@ namespace Server.Controllers
         {
             try
             {
-                List<comment> comments = await handleComments.getComments(option.UserID, option.PostID);
+                List<comment> comments = await handleComments.getComments({ UserID: option.UserID, PostID: option.PostID });
                 return Ok(comments);
             }
             catch (System.Exception)
@@ -258,7 +258,7 @@ namespace Server.Controllers
                                 userID = reader.GetInt32(reader.GetOrdinal("userID")),
                                 postID = reader.GetInt32(reader.GetOrdinal("postID")),                             
                             };
-                            item.comments = await handleComments.getComments(option.UserID, option.PostID);
+                            item.comments = await handleComments.getComments(new Options { UserID: option.UserID, PostID: option.PostID });
                             Posts.Add(item);
                         }
                         reader.Close();
