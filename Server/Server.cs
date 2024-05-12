@@ -194,9 +194,9 @@ namespace Server.Controllers
                 return comments;                
             }
             catch (Exception ex)
-            {
-                Console.WriteLine("Failed to get comments");
-                return ([]);
+            {   
+                Console.WriteLine('Error', ex)
+                return [];
             }
         }
     }
@@ -270,7 +270,8 @@ namespace Server.Controllers
                 return Ok(Posts);
             }
             catch (Exception ex)
-            {
+            {   
+                Console.WriteLine('Error', ex)
                 return StatusCode(500, "Internal Server Error");
             }
         }
@@ -329,7 +330,8 @@ namespace Server.Controllers
                 }
             }
             catch (Exception ex)
-            {
+            {   
+                Console.WriteLine('Error', ex)
                 return StatusCode(500, "Internal Server Error");
             }
         }
