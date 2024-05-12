@@ -140,7 +140,7 @@ namespace Server.Controllers
     public class handlePassComments
     {
         [HttpPost]        
-        public async Task<ActionResult<List<Comment>>> fetchComments([FromBody] Options option )
+        public async Task<ActionResult<List<comment>>> fetchComments([FromBody] Options option )
         {
             try
             {
