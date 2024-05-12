@@ -143,7 +143,7 @@ namespace Server.Controllers
             catch (System.Exception)
             {
                 Console.WriteLine("Failed to get comments");
-                return StatusCode(500, 'Internal Server Error');
+                return StatusCode(500, "Internal Server Error");
             }
         }
         public async Task<List<comment>> getComments(int userID, int postID)
@@ -175,14 +175,14 @@ namespace Server.Controllers
                                 likeCount = reader.GetInt32(reader.GetOrdinal("likeCount"));
                                 dislikeCount = reader.GetInt32(reader.GetOrdinal("dislikeCount"));
                             }
-                            comments.Add(comment)
+                            comments.Add(comment);
                         }
                         reader.Close();
                         return comments;
                     }
                 }
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
                 Console.WriteLine("Failed to get comments");
                 return ([]);
@@ -257,9 +257,9 @@ namespace Server.Controllers
 
                 }
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
-                return Status(500, 'Internal server error');
+                return StatusCode(500, "Internal Server Error");
             }
         }
     }
@@ -307,9 +307,9 @@ namespace Server.Controllers
                 }
 
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
-                return Status(500, 'Internal server error');
+                return StatusCode(500, "Internal Server Error");
             }
         }
     }
