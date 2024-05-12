@@ -31,8 +31,8 @@ export default function Create()
         
         formData.append("title", item.title);
         formData.append("message", item.message);
-        formData.append("userID", item.message);
-        formData.append("userName", item.message);
+        formData.append("userID", 121); 
+        formData.append("userName", 'Jeeves'); 
         formData.append("Picture", item.pictureFile);
 
         const response = await axios.post(`${server}/api/createPost`, formData)

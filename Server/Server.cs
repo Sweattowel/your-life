@@ -304,7 +304,7 @@ namespace Server.Controllers
                 {
                     await createItemRequest.Picture.CopyToAsync(stream);
                 }
-                string queryStatement = "INSERT INTO POSTS (title, message, picture, likeCount, disLikeCount, userName, userID, postID) VALUES (@title, @message, @picture, 0, 0, @userName, @userID, @postID)";
+                string queryStatement = "INSERT INTO POSTS (title, message, picture, likeCount, dislikeCount, userName, userID, postID) VALUES (@title, @message, @picture, 0, 0, @userName, @userID, @postID)";
                 string connectionString = ConnectionString.GetConnectionString();
 
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
