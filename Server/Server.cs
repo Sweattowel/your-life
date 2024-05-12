@@ -302,7 +302,7 @@ namespace Server.Controllers
                 string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "images", imageFileName);
                 using (var stream = new FileStream(fullPath, FileMode.Create))
                 {
-                    await createItemRequest.Picture..CopyToAsync(stream);
+                    await createItemRequest.Picture.CopyToAsync(stream);
                 }
                 string queryStatement = "INSERT INTO POSTS (title, message, picture, likeCount, disLikeCount, userName, userID, postID) VALUES (@title, @message, @picture, 0, 0, @userName, @userID, @postID)";
                 string connectionString = ConnectionString.GetConnectionString();
