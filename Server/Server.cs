@@ -150,7 +150,7 @@ namespace Server.Controllers
         {
             try
             {
-                string commentStatement = "SELECT * FROM COMMENTS WHERE postID = @PostID AND UserID = @UserID"
+                string commentStatement = "SELECT * FROM COMMENTS WHERE postID = @PostID AND UserID = @UserID";
                 string ConnectionString = ConnectionString.GetConnectionString();
                 
                 List<comment> comments = new List<comment>();
@@ -162,18 +162,18 @@ namespace Server.Controllers
                         command.Parameters.AddWithValue("@PostID", postID);
                         command.Parameters.AddWithValue("@UserID", userID);
 
-                        connection.Open()
+                        connection.Open();
                         MySqlDataReader reader = command.ExecuteReader();
                         
                         while (reader.read)
                         {
                             comment comment = new comment
                             {
-                                userPicture = reader.GetString(reader.GetOrdinal("userPicture"))
-                                userName = reader.GetString(reader.GetOrdinal("userName"))
-                                comment = reader.GetString(reader.GetOrdinal("comment"))
-                                likeCount = reader.GetInt32(reader.GetOrdinal("likeCount"))
-                                dislikeCount = reader.GetInt32(reader.GetOrdinal("dislikeCount"))
+                                userPicture = reader.GetString(reader.GetOrdinal("userPicture"));
+                                userName = reader.GetString(reader.GetOrdinal("userName"));
+                                comment = reader.GetString(reader.GetOrdinal("comment"));
+                                likeCount = reader.GetInt32(reader.GetOrdinal("likeCount"));
+                                dislikeCount = reader.GetInt32(reader.GetOrdinal("dislikeCount"));
                             }
                             comments.Add(comment)
                         }
@@ -287,21 +287,21 @@ namespace Server.Controllers
                     using (MySqlCommand command = new MySqlCommand(queryStatement, connection))
                     {
                         connection.Open()
-                        command.Parameters.AddWithValue("@comments", post.comments)
-                        command.Parameters.AddWithValue("@dislikeCount", post.dislikeCount)
-                        command.Parameters.AddWithValue("@likeCount", post.likeCount)
-                        command.Parameters.AddWithValue("@message", post.message)
-                        command.Parameters.AddWithValue("@picture", fullPath)
-                        command.Parameters.AddWithValue("@postID", post.postID)
-                        command.Parameters.AddWithValue("@title", post.title)
-                        command.Parameters.AddWithValue("@userID", post.userID)
-                        command.Parameters.AddWithValue("@userName", post.userName)
+                        command.Parameters.AddWithValue("@comments", post.comments);
+                        command.Parameters.AddWithValue("@dislikeCount", post.dislikeCount);
+                        command.Parameters.AddWithValue("@likeCount", post.likeCount);
+                        command.Parameters.AddWithValue("@message", post.message);
+                        command.Parameters.AddWithValue("@picture", fullPath);
+                        command.Parameters.AddWithValue("@postID", post.postID);
+                        command.Parameters.AddWithValue("@title", post.title);
+                        command.Parameters.AddWithValue("@userID", post.userID);
+                        command.Parameters.AddWithValue("@userName", post.userName);
                         int rowsAffected = await command.ExecuteNonQueryAsync();
 
                         if (rowsAffected > 0){
-                            return Ok("Post made")
+                            return Ok("Post made");
                         } else {
-                            return StatusCode(500, 'Failed to create post')
+                            return StatusCode(500, 'Failed to create post');
                         }
                     }
                 }
