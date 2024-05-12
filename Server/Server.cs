@@ -286,7 +286,7 @@ namespace Server.Controllers
                 {
                     using (MySqlCommand command = new MySqlCommand(queryStatement, connection))
                     {
-                        connection.Open()
+                        connection.Open();
                         command.Parameters.AddWithValue("@comments", post.comments);
                         command.Parameters.AddWithValue("@dislikeCount", post.dislikeCount);
                         command.Parameters.AddWithValue("@likeCount", post.likeCount);
@@ -301,7 +301,7 @@ namespace Server.Controllers
                         if (rowsAffected > 0){
                             return Ok("Post made");
                         } else {
-                            return StatusCode(500, 'Failed to create post');
+                            return StatusCode(500, "Failed to create post");
                         }
                     }
                 }
