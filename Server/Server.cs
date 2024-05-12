@@ -64,9 +64,9 @@ namespace Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddCors(options =>
+            services.AddCors(Options =>
             {
-                options.AddPolicy("AllowAll",
+                Options.AddPolicy("AllowAll",
                     builder =>
                     {
                 builder.WithOrigins(
@@ -129,7 +129,7 @@ namespace Server.Controllers
         public int likeCount { get; set; }
         public int dislikeCount { get; set; }
     }
-    public class options
+    public class Options
     {
         public int UserID { get; set; }
         public int PostID { get; set; }
@@ -140,7 +140,7 @@ namespace Server.Controllers
     public class handlePassComments
     {
         [HttpPost]        
-        public async Task<ActionResult<comment>> fetchComments([FromBody] options option )
+        public async Task<ActionResult<List<Comment>>> fetchComments([FromBody] Options option )
         {
             try
             {
@@ -205,7 +205,7 @@ namespace Server.Controllers
     public class handlePosts : ControllerBase
     {
         [HttpPost]
-        public async Task<ActionResult<Post>> GetPosts([FromBody] options option)
+        public async Task<ActionResult<Post>> GetPosts([FromBody] Options option)
         {
             try
             {
