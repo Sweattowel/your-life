@@ -144,7 +144,7 @@ namespace Server.Controllers
         {
             try
             {
-                List<comment> comments = await handleComments.getComments(new Options { UserID = option.UserID, PostID = option.PostID });
+                List<comment> comments = await handleComments.getComments(new Options { userID = option.UserID, postID = option.PostID });
                 return Ok(comments);
             }
             catch (System.Exception)
@@ -258,7 +258,7 @@ namespace Server.Controllers
                                 userID = reader.GetInt32(reader.GetOrdinal("userID")),
                                 postID = reader.GetInt32(reader.GetOrdinal("postID")),                             
                             };
-                            item.comments = await handleComments.getComments(new Options { UserID = option.UserID, PostID = option.PostID });
+                            item.comments = await handleComments.getComments(new Options { userID = option.UserID, postID = option.PostID });
                             Posts.Add(item);
                         }
                         reader.Close();
@@ -291,7 +291,7 @@ namespace Server.Controllers
                 string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "images", imageFileName);
                 using (var stream = new FileStream(fullPath, FileMode.Create))
                 {
-                    await post.picture.CopyToAsync(stream);
+                    await post.pictureFile.CopyToAsync(stream);
                 }
                 string queryStatement = "INSERT INTO POSTS (title, message, picture, likeCount, disLikeCount, userName, userID, postID) VALUES (@title, @message, @picture, 0, 0, @userName, @userID, @postID)";
                 string connectionString = ConnectionString.GetConnectionString();
