@@ -296,7 +296,7 @@ namespace Server.Controllers
         {
             try
             {
-                string extension = Path.GetExtension(createItemRequest.Picture..FileName);
+                string extension = Path.GetExtension(createItemRequest.Picture.FileName);
                 string imageFileName = $"{Guid.NewGuid()}.{GetFileExtension(createItemRequest.Picture.FileName)}";
                 string imagePath = Path.Combine("images", imageFileName);
                 string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "images", imageFileName);
