@@ -235,11 +235,11 @@ namespace Server.Controllers
                     {
                         if (option.UserID != -1 && option.PostID == -1) 
                         {
-                            command.Parameters.AddWithValue("@PostID", option.UserID);
+                            command.Parameters.AddWithValue("@PostID", option.PostID});
                         }
                         else if (option.UserID == -1 && option.PostID != -1)
                         {
-                            command.Parameters.AddWithValue("@UserID", option.PostID);
+                            command.Parameters.AddWithValue("@UserID", option.UserID);
                         }
                         
                         
@@ -247,16 +247,16 @@ namespace Server.Controllers
 
                         MySqlDataReader reader = command.ExecuteReader();
 
-                        while (reader.Read()())
+                        while (reader.Read())
                         {
                             Post item = new Post
                             {
                                 title = reader.GetString(reader.GetOrdinal("title")),
-                                message = reader.postID(reader.GetOrdinal("message")),
-                                picture = reader.postID(reader.GetOrdinal("picture")),
+                                message = reader.GetString(reader.GetOrdinal("message")),
+                                picture = reader.GetString(reader.GetOrdinal("picture")),
                                 likeCount = reader.GetInt32(reader.GetOrdinal("likeCount")),
                                 dislikeCount = reader.GetInt32(reader.GetOrdinal("dislikeCount")),
-                                userName = reader.postID(reader.GetOrdinal("userName")),
+                                userName = reader.GetString(reader.GetOrdinal("userName")),
                                 userID = reader.GetInt32(reader.GetOrdinal("userID")),
                                 postID = reader.GetInt32(reader.GetOrdinal("postID")),                             
                             };
