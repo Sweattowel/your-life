@@ -177,7 +177,7 @@ namespace Server.Controllers
                         connection.Open();
                         MySqlDataReader reader = command.ExecuteReader();
                         
-                        while (reader.read)
+                        while (reader.Read())
                         {
                             comment comment = new comment
                             {
@@ -247,7 +247,7 @@ namespace Server.Controllers
 
                         MySqlDataReader reader = command.ExecuteReader();
 
-                        while (reader.read())
+                        while (reader.Read()())
                         {
                             Post item = new Post
                             {
