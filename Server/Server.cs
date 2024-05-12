@@ -27,7 +27,7 @@ using Server.Controllers;
 using Server;
 using Startup;
 
-namespace Startup
+namespace Server
 {
     public class Program
     {
@@ -94,8 +94,6 @@ namespace Startup
             });
         }        
     }
-
-
     public class ConnectionString
     {
         public static string GetConnectionString()
@@ -106,7 +104,7 @@ namespace Startup
             string dataBaseStr = Environment.GetEnvironmentVariable("REACT_APP_DATABASE_DATABASE");
             return $"server={hostStr};user={userStr};database={dataBaseStr};port=3306;password={passStr};";
         }
-    }
+    }    
 }
 namespace Server.Controllers
 {
@@ -163,11 +161,11 @@ namespace Server.Controllers
             try
             {
                 string commentStatement = "SELECT * FROM COMMENTS WHERE postID = @PostID AND UserID = @UserID";
-                string ConnectionString = ConnectionString.GetConnectionString();
+                string connectionString = ConnectionString.GetConnectionString();
                 
                 List<comment> comments = new List<comment>();
 
-                using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     using (MySqlCommand command = new MySqlCommand(commentStatement, connection))
                     {
@@ -211,7 +209,7 @@ namespace Server.Controllers
         {
             try
             {
-                string ConnectionString = ConnectionString.GetConnectionString();
+                string connectionString = ConnectionString.GetConnectionString();
                 string postStatement = "";
                 if (option.UserID != -1 && option.PostID != -1)
                 {
@@ -229,7 +227,7 @@ namespace Server.Controllers
 
                 List<Post> Posts = new List<Post>();
 
-                using (MySqlConnection connection = new MySqlConnection(ConnectionString))
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     using (MySqlCommand command = new MySqlCommand(postStatement, connection))
                     {
@@ -277,7 +275,11 @@ namespace Server.Controllers
     [Route("/api/createPost")]
     [ApiController]
     public class handleCreatePost
-    { 
+    {         
+        private string GetFileExtension(string fileName)
+        {
+            return Path.GetExtension(fileName).TrimStart('.');
+        }
         [HttpPost]
         static async Task<ActionResult> createPost([FromBody] Post post)
         {
@@ -289,7 +291,7 @@ namespace Server.Controllers
                 string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "images", imageFileName);
                 using (var stream = new FileStream(fullPath, FileMode.Create))
                 {
-                    await createItemRequest.Picture.CopyToAsync(stream);
+                    await post.Picture.CopyToAsync(stream);
                 }
                 string queryStatement = "INSERT INTO POSTS (title, message, picture, likeCount, disLikeCount, userName, userID, postID) VALUES (@title, @message, @picture, 0, 0, @userName, @userID, @postID)";
                 string connectionString = ConnectionString.GetConnectionString();
