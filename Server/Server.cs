@@ -137,7 +137,7 @@ namespace Server.Controllers
 
     [Route("/api/getComments")]
     [ApiController]    
-    public class handlePassComments
+    public class handlePassComments : ControllerBase
     {
         [HttpPost]        
         public async Task<ActionResult<List<comment>>> fetchComments([FromBody] Options option )
@@ -274,7 +274,7 @@ namespace Server.Controllers
     }
     [Route("/api/createPost")]
     [ApiController]
-    public class handleCreatePost
+    public class handleCreatePost : ControllerBase
     {         
         private string GetFileExtension(string fileName)
         {
@@ -310,6 +310,7 @@ namespace Server.Controllers
                         command.Parameters.AddWithValue("@title", post.title);
                         command.Parameters.AddWithValue("@userID", post.userID);
                         command.Parameters.AddWithValue("@userName", post.userName);
+
                         int rowsAffected = await command.ExecuteNonQueryAsync();
 
                         if (rowsAffected > 0){
