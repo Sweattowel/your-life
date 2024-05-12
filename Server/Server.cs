@@ -281,7 +281,7 @@ namespace Server.Controllers
             return Path.GetExtension(fileName).TrimStart('.');
         }
         [HttpPost]
-        static async Task<ActionResult> createPost([FromBody] Post post)
+        public async Task<ActionResult> createPost([FromBody] Post post)
         {
             try
             {
