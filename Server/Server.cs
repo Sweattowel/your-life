@@ -195,7 +195,7 @@ namespace Server.Controllers
             }
             catch (Exception ex)
             {   
-                Console.WriteLine("Error", ex);
+                Console.WriteLine("Error", ex.message);
                 return [];
             }
         }
@@ -271,7 +271,7 @@ namespace Server.Controllers
             }
             catch (Exception ex)
             {   
-                Console.WriteLine("Error", ex);
+                Console.WriteLine("Error", ex.message);
                 return StatusCode(500, "Internal Server Error");
             }
         }
@@ -331,7 +331,7 @@ namespace Server.Controllers
             }
             catch (Exception ex)
             {   
-                Console.WriteLine("Error", ex);
+                Console.WriteLine("Error", ex.message);
                 return StatusCode(500, "Internal Server Error");
             }
         }
