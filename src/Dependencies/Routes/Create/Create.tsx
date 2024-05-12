@@ -46,7 +46,7 @@ export default function Create()
         }
     }
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    const handleInputChange = (e) =>
     {
         const { name, value } = e.target;
         setItem((prevItem) => ({
@@ -55,7 +55,7 @@ export default function Create()
         }));
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    const handleFileChange = (e) =>
     {
         const file = e.target.files && e.target.files[0];
         setItem((prevItem) => ({

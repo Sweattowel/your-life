@@ -206,7 +206,7 @@ namespace Server.Controllers
     public class handlePosts : ControllerBase
     {
         [HttpPost]
-        public async Task<ActionResult<Post>> GetPosts([FromForm] CreateItemRequest createItemRequest)
+        public async Task<ActionResult<Post>> GetPosts([FromBody] Options option)
         {
             try
             {
