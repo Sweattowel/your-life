@@ -178,9 +178,10 @@ namespace Server.Controllers
                             comments.Add(comment);
                         }
                         reader.Close();
-                        return comments;
+
                     }
                 }
+                return comments;                
             }
             catch (Exception ex)
             {
@@ -201,15 +202,15 @@ namespace Server.Controllers
             {
                 string ConnectionString = ConnectionString.GetConnectionString();
                 string postStatement = "";
-                if (option.UserID !== -1 && option.PostID !== -1)
+                if (option.UserID != -1 && option.PostID != -1)
                 {
                     postStatement = "SELECT * FROM POSTS";
                 }
-                else if (option.UserID == -1 && option.PostID !== -1) 
+                else if (option.UserID == -1 && option.PostID != -1) 
                 {
                     postStatement = "SELECT * FROM POSTS WHERE PostID = @PostID";
                 }
-                else if (option.UserID !== -1 && option.PostID == -1)
+                else if (option.UserID != -1 && option.PostID == -1)
                 {
                     postStatement = "SELECT * FROM POSTS WHERE UserID = @UserID";
                 }
