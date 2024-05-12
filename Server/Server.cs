@@ -29,65 +29,72 @@ using Startup;
 
 namespace Startup
 {
-    public static void Main(string[] args)
+    public class Program
     {
-        try
+        public static void Main(string[] args)
         {
-            DotNetEnv.Env.Load();
-            CreateHostBuilder(args).Build().Run();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"An error occurred: {ex.Message}");
-        }
-    }
-
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder =>
+            try
             {
-                webBuilder.UseStartup<Startup>()
-                        .UseUrls(Environment.GetEnvironmentVariable("REACT_APP_SERVER_ADDRESS"));
-            });
-    public IConfiguration Configuration { get; }
+                DotNetEnv.Env.Load();
+                CreateHostBuilder(args).Build().Run();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
 
-    public Startup(IConfiguration configuration)
-    {
-        Configuration = configuration;
-    }
-
-    public void ConfigureServices(IServiceCollection services)
-    {
-        services.AddControllers();
-        services.AddCors(options =>
-        {
-            options.AddPolicy("AllowAll",
-                builder =>
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
                 {
-            builder.WithOrigins(
-                "http://localhost:3000",
-                "http://192.168.0.254:3000")
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-                });
-        });
+                    webBuilder.UseStartup<Startup>()
+                            .UseUrls(Environment.GetEnvironmentVariable("REACT_APP_SERVER_ADDRESS"));
+                });        
+    }
+    public class Startup
+    {
+        public IConfiguration Configuration { get; }
+
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllers();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                builder.WithOrigins(
+                    "http://localhost:3000",
+                    "http://192.168.0.254:3000")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+                    });
+            });
+        }
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "images")),
+                RequestPath = "/images"
+            });
+            app.UseRouting();
+            app.UseCors("AllowAll");
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+        }        
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-    {
-        app.UseStaticFiles(new StaticFileOptions
-        {
-            FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "images")),
-            RequestPath = "/images"
-        });
-        app.UseRouting();
-        app.UseCors("AllowAll");
-        app.UseAuthorization();
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
-    }
 
     public class ConnectionString
     {
