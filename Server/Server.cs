@@ -143,8 +143,9 @@ namespace Server.Controllers
         public async Task<ActionResult<List<comment>>> fetchComments([FromBody] Options option)
         {
             try
-            {
-                List<comment> comments = await handleComments.getComments(option.UserID, option.PostID);
+            {   
+                handleComments commentsHandler = new handleComments();
+                List<comment> comments = await commentsHandler.getComments(option.UserID, option.PostID);
                 return Ok(comments);
             }
             catch (System.Exception)
@@ -245,6 +246,8 @@ namespace Server.Controllers
 
                         MySqlDataReader reader = command.ExecuteReader();
 
+                        handleComments commentsHandler = new handleComments(); 
+
                         while (reader.Read())
                         {
                             Post item = new Post
@@ -258,8 +261,8 @@ namespace Server.Controllers
                                 userID = reader.GetInt32(reader.GetOrdinal("userID")),
                                 postID = reader.GetInt32(reader.GetOrdinal("postID")),                             
                             };
-                            item.comments = await handleComments.getComments(option.UserID, option.PostID);
-                            Posts.Add(item);
+                            item.comments = await commentsHandler.getComments(option.UserID, option.PostID);
+                            Posts.Add(item)
                         }
                         reader.Close();
                     }
