@@ -25,6 +25,7 @@ using DotNetEnv;
 using BCrypt;
 using Server.Controllers;
 using Server;
+using checks;
 
 
 namespace Server
@@ -135,6 +136,7 @@ namespace Server.Controllers
         public int PostID { get; set; }
     }
 
+    // COMMENT HANDLE
     [Route("/api/getComments")]
     [ApiController]    
     public class handlePassComments : ControllerBase
@@ -155,12 +157,18 @@ namespace Server.Controllers
             }
         }        
     }
+    // COLLECT COMMENTS FROM DATABASE
     public class handleComments
     {
         public async Task<List<comment>> getComments(int UserID, int PostID)
         {
             try
             {
+                if (!checkChecks.CheckExist([UserID, PostID]))
+                {
+                    Console.WriteLine("Handle comments missing data")
+                    return []
+                }
                 string commentStatement = "SELECT * FROM COMMENTS WHERE postID = @PostID AND UserID = @UserID";
                 string connectionString = ConnectionString.GetConnectionString();
                 
@@ -200,6 +208,10 @@ namespace Server.Controllers
             }
         }
     }
+
+    ////// POST HANDLE
+    ///// Extra search terms Get posts postsCollect gett post postGet
+    // GET POST
     [Route("/api/getPosts")]
     [ApiController]
 
@@ -212,6 +224,11 @@ namespace Server.Controllers
             {
                 string connectionString = ConnectionString.GetConnectionString();
                 string postStatement = "";
+                if (!checks.checkChecks.checkExist([option.PostID, option.UserID]))
+                {
+                    Console.WriteLine("Failed to collect posts")
+                    return StatusCode(500, 'Failed to collect posts please refresh')
+                }
                 if (option.UserID != -1 && option.PostID != -1)
                 {
                     postStatement = "SELECT * FROM POSTS";
@@ -276,6 +293,7 @@ namespace Server.Controllers
             }
         }
     }
+    // CREATE POST
     [Route("/api/createPost")]
     [ApiController]
     public class handleCreatePost : ControllerBase
@@ -297,6 +315,19 @@ namespace Server.Controllers
         {
             try
             {
+                string[] checkList = new string[]
+                {
+                    createItemRequest.title,
+                    createItemRequest.message,
+                    createItemRequest.picture,
+                    createItemRequest.userID,
+                    createItemRequest.userName,                    
+                };
+                if (!checkChecks.CheckExist(checkList) || !checkChecks.checkType()) 
+                {
+                    Console.WriteLine('Bad Create Request')
+                    return StatusCode(409, 'Bad Request')
+                }
                 string extension = Path.GetExtension(createItemRequest.Picture.FileName);
                 string imageFileName = $"{Guid.NewGuid()}.{GetFileExtension(createItemRequest.Picture.FileName)}";
                 string imagePath = Path.Combine("images", imageFileName);
@@ -336,6 +367,281 @@ namespace Server.Controllers
                 Console.WriteLine("Error", ex.Message);
                 return StatusCode(500, "Internal Server Error");
             }
+        }
+    }
+    public class RegisterDetails
+    {
+        public string userName { get; set; }
+        public string passWord { get; set; }
+        public string emailAddress { get; set; }
+    }
+    public class LoginDetails
+    {
+        public int userID { get; set; }
+        public string userName { get; set; }
+        public string passWord { get; set; }
+        public string emailAddress { get; set; }
+    }    
+    [Route("/api/Register")]
+    [ApiController]
+    public class RegisterHandle
+    {
+
+        [HttpPost]
+        public async Task<ActionResult<LoginDetails>> RegisterUser([FromBody] RegisterDetails registerDetails)
+        {
+            try
+            {
+                string connectionString = await ConnectionString.GetConnectionString();
+                string queryStatement = "INSERT into USERS (userName, passWord, emailAddress) VALUES (@userName, @passWord, @emailAddress)";
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+                    using (MySqlCommand command = new MySqlCommand(queryStatement, connection))
+                    {
+                        string hashedPassword = await BcryptEncryption.Encrypt(registerDetails.passWord);
+                        command.Parameters.AddWithValue("@userName", registerDetails.userName);
+                        command.Parameters.AddWithValue("@passWord", hashedPassword);
+                        command.Parameters.AddWithValue("@emailAddress", registerDetails.emailAddress);
+
+                        int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                        if (rowsAffected === 1)
+                        {
+                            return Ok("Successfully made account");
+                        }
+                        else if (rowsAffected > 1) 
+                        {
+                            Console.Writeline("CRITICAL ERROR IN USER GENERATION CHECK IMMEDIATELY");
+                            return StatusCode(500, "Internal Server Error");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {   
+                Console.WriteLine("Error", ex.Message);
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+    }
+    [Route("/api/Login")]
+    [ApiController]
+    public class HandleLogin : ControllerBase
+    {
+        [HttpPost]
+        public async Task<ActionResult<LoginDetails>> Login([FromBody] LoginDetails loginDetails)
+        {
+            try
+            {
+                string connectionString = ConnectionString.GetConnectionString();
+                string queryStatement = '';
+
+                int selected = -1
+                if (loginDetails.userName == '' && loginDetails.emailAddress != ''){
+                    queryStatement = "SELECT * FROM USERS WHERE userName = @userName AND passWord = @passWord";
+                    selected = 0
+                } else if (loginDetails.userName != '' && loginDetails.emailAddress == ''){
+                    queryStatement = "SELECT * FROM USERS WHERE emailAddress = @emailAddress AND passWord = @passWord";
+                    selected = 1;
+                } else {
+                    return BadRequest("Invalid input");
+                }
+
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+                    using (MySqlCommand command = new MySqlCommand(queryStatement, connectionString))
+                    {
+                        if (selected === 0){
+                            command.Parameters.AddWithValue("@userName", loginDetails.userName);
+                        } else {
+                            command.Parameters.AddWithValue("@emailAddress", loginDetails.emailAddress);
+                        }
+
+                        command.AddWithValue("passWord", loginDetails.passWord);
+
+                        using (MySqlDataReader reader = await command.ExecuteReaderAsync())
+                        {
+                            if (await reader.ReadAsync())
+                            {
+                                int userID = reader.GetInt32(reader.GetOrdinal("userID"));
+                                string username = reader.GetString(reader.GetOrdinal("userName"));
+                                string hashedPassword = reader.GetString(reader.GetOrdinal("passWord"))
+                                string email = reader.GetString(reader.GetOrdinal("emailAddress"));
+                                if (BcryptEncryption.Decrypt(password, hashedPassword)){
+                                    return Ok(new LoginDetails { userID = userID, userName = username, emailAddress = email });
+                                }
+                                return Unauthorized("Invalid username/email or password");
+                            }
+                            else
+                            {
+                                return Unauthorized("Invalid username/email or password");
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {   
+                Console.WriteLine("Error", ex.Message);
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+    }
+}
+namespace checks
+{
+    ////// CUSTOM CHECK CREATION
+    // JWT CHECKS CREATION AND VALIDATION
+    public class validationChecks
+    {
+        private static readonly string Secret = Environment.GetEnvironmentVariable("REACT_APP_TOKEN_SECRET");
+        private class UserModel
+        {
+            public int userID { get; set}
+            public string UserName { get; set; }
+            public string EmailAddress { get; set; }
+        }
+        public static string CreateToken(UserModel userInfo)
+        {
+            Console.WriteLine(Secret);
+            var TokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(Secret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, userInfo.userID.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, userInfo.userName)
+                    new Claim(ClaimTypes.Email, userInfo.EmailAddress)
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = TokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = TokenHandler.WriteToken(token);
+
+            return tokenString;
+        }
+
+        public static boolean validateToken(token)
+        {
+            Console.WriteLine(Secret);
+            var TokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(Secret);
+
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false, // Modify as needed
+                ValidateAudience = false, // Modify as needed
+                ValidateLifetime = true, // Ensure token hasn't expired
+                ClockSkew = TimeSpan.Zero // Set clock skew to zero so that tokens are only valid exactly at their expiration time
+            };
+
+            SecurityToken validatedToken;
+            var principal = TokenHandler.ValidateToken(token, tokenValidationParameters, out validatedToken);
+
+            // Token is valid
+            return true;
+        }
+        private class TokenRefreshRequestModel
+        {
+            public int UserID { get; set; }
+            public string UserName { get; set; }
+        }     
+        public static TokenRefresh(TokenRefreshRequestModel requestModel)
+        {
+            if (string.IsNullOrWhiteSpace(requestModel.UserName))
+            {
+                return BadRequest("UserName cannot be empty or whitespace.");
+            }
+
+            var authorizationHeader = HttpContext.Request.Headers["Authorization"];
+            if (string.IsNullOrEmpty(authorizationHeader))
+            {
+                Console.WriteLine("Failed to verify");
+                return StatusCode(401, "Unauthorized");
+            }
+            var token = authorizationHeader.ToString().Replace("Bearer ", "");
+
+            DateTime expirationTime = ValidateAndExtractExpirationTime(token);
+
+            TimeSpan timeUntilExpiration = expirationTime - DateTime.UtcNow;
+
+            if(timeUntilExpiration <= TimeSpan.FromMinutes(5))
+            {
+                string newToken = TokenHandler.CreateToken(requestModel.UserID, requestModel.UserName);
+                return newToken;
+            }                
+            else {
+                return token;
+            }
+        }   
+        private DateTime ValidateAndExtractExpirationTime(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var securityToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+            var expirationTime = securityToken.ValidTo.ToUniversalTime();
+            return expirationTime;
+        }       
+    }
+    // ENCRYPTION AND DECRYPTION HANDLE
+    public class BcryptEncryption
+    {
+        // ENCRYPT PASSWORD
+        public static string Encrypt(string password)
+        {
+            if (!checkChecks.checkType(password, typeof(string))) return;
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password, 10);
+            return hashedPassword;
+        }
+
+        // DECRYPT PASSWORD
+        public static bool Decrypt(string password, string hashedPassword)
+        {
+            if (!checkChecks.checkType(new string[] {password, hashedPassword}, typeof(string))) return;
+            bool passwordMatches = BCrypt.Net.BCrypt.Verify(password, hashedPassword);
+            return passwordMatches;
+        }
+    }
+    // COMMON CHECK TYPES
+    public class checkChecks
+    {
+        public static boolean checkType<T>(T[] incoming, Type targetType)
+        {
+            foreach (var item in incoming)
+            {
+                if (typeof(item) != targetType)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public static boolean checkCompare<T>(T[] incoming, T target)
+        {
+            foreach (var item in incoming)
+            {
+                if (!item.Equals(target)))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public static bool CheckExist<T>(T[] incoming)
+        {
+            foreach (var item in incoming)
+            {
+                if (Equals(item, default(T)))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }
