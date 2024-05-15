@@ -121,6 +121,7 @@ namespace Server.Controllers
         public string userName { get; set;}
         public int userID { get; set;}
         public int postID { get; set;}
+        public string tags { get; set; }
     }
     public class comment
     {
@@ -277,6 +278,7 @@ namespace Server.Controllers
                                 userName = reader.GetString(reader.GetOrdinal("userName")),
                                 userID = reader.GetInt32(reader.GetOrdinal("userID")),
                                 postID = reader.GetInt32(reader.GetOrdinal("postID")),                             
+                                tags = reader.GetString(reader.GetOrdinal("tags")),                             
                             };
                             item.comments = await commentsHandler.getComments(option.UserID, option.PostID);
                             Posts.Add(item);
@@ -293,7 +295,21 @@ namespace Server.Controllers
             }
         }
     }
-    // CREATE POST
+    //// CREATE POST
+    /*
+        Creating states to defined tags? or we could use a bit system that can be used to create an efficient tag system
+        lets create 3-4 example tags that can maybe be built upon
+        We can either use this type of system
+        0  Decor
+        1  Lifestyle
+        10 Funny
+        11 Music
+        110 Sport
+        Or use an and gate type system i.e. to resresent the same data as above we would use 
+        00000
+        i.e. if it has tag decor and funny it would be 10100
+        Reckon the second is better and can be expanded upon as we go from the left and can only flip on and off
+    */
     [Route("/api/createPost")]
     [ApiController]
     public class handleCreatePost : ControllerBase
@@ -305,6 +321,7 @@ namespace Server.Controllers
             public IFormFile Picture { get; set; }
             public int userID { get; set; }
             public string userName { get; set; }
+            public string tags { get; set; }
         }  
         private string GetFileExtension(string fileName)
         {
@@ -336,7 +353,7 @@ namespace Server.Controllers
                 {
                     await createItemRequest.Picture.CopyToAsync(stream);
                 }
-                string queryStatement = "INSERT INTO POSTS (title, message, picture, likeCount, dislikeCount, userName, userID, postID) VALUES (@title, @message, @picture, 0, 0, @userName, @userID, @postID)";
+                string queryStatement = "INSERT INTO POSTS (title, message, picture, likeCount, dislikeCount, userName, userID, postID, Tags) VALUES (@title, @message, @picture, 0, 0, @userName, @userID, @postID, @tags)";
                 string connectionString = ConnectionString.GetConnectionString();
                 Console.WriteLine(queryStatement, connectionString);
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -351,6 +368,7 @@ namespace Server.Controllers
                         command.Parameters.AddWithValue("@title", createItemRequest.title);
                         command.Parameters.AddWithValue("@userID", createItemRequest.userID);
                         command.Parameters.AddWithValue("@userName", createItemRequest.userName);
+                        command.Parameters.AddWithValue("@tags", createItemRequest.tags);
 
                         int rowsAffected = await command.ExecuteNonQueryAsync();
 
