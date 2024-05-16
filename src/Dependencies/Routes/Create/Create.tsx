@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { useMyContext } from "../../../ContextProvider/ContextProvider.tsx";
 
 
 interface item
@@ -13,12 +14,25 @@ interface item
 export default function Create()
 {
     const server = process.env.REACT_APP_SERVER_ADDRESS
-    const [item, setItem] = useState<item>({
+    const [            
+        authenticated,
+        setAuthenticated,
+        admin,
+        setAdmin,
+        userID,
+        setUserID,
+        userName,
+        setUserName,
+        email,
+        setEmail, ] = useMyContext()
+
+        
+    const [item, setItem] = useState<item>({                   
         title: "",
         message: "",
         pictureFile: null,
         userName: "",
-        userID: 0,
+        userID: -1,
     });
 
 
@@ -31,8 +45,8 @@ export default function Create()
         
         formData.append("title", item.title);
         formData.append("message", item.message);
-        formData.append("userID", 121); 
-        formData.append("userName", 'Jeeves'); 
+        formData.append("userID", userID); 
+        formData.append("userName", userName); 
         formData.append("Picture", item.pictureFile);
 
         const response = await axios.post(`${server}/api/createPost`, formData)
@@ -65,7 +79,7 @@ export default function Create()
     };
 
     return (
-        <section className="bg-gradient-to-br from-HIGHLIGHTB to-WHITE text-WHITE ml-[15vw] mt-[5vh] w-[80vw] h-[90vh] shadow-lg">
+        <section className="bg-gradient-to-br from-HIGHLIGHTB to-WHITE text-WHITE ml-[18vw] mt-[5vh] w-[80vw] h-[90vh] shadow-lg">
             <h1 className="w-full text-center text-[1.5rem]">
                 Create BlogPost
             </h1>

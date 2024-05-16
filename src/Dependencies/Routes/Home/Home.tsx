@@ -51,6 +51,7 @@ export default function Home()
                 switch (response.status) {
                     case 200:
                         setPosts(response.data)
+                        sessionStorage.setItem("posts", JSON.stringify(response.data))
                         break;
                     case 404:
                         setPosts([])
@@ -71,13 +72,18 @@ export default function Home()
     }
 
     useEffect(() => {
-        handlePosts.getPosts();
+
+        let cache = sessionStorage.getItem("posts")
+        if (!cache || cache.length === 0){
+            handlePosts.getPosts();
+        }
+        
     },[])
     return(
         <section className="ml-[10vw] w-[85vw] h-full flex flex-col justify-evenly">
 
             {posts.map((post, index) => (
-                <div key={index} className="w-[80%] m-auto flex flex-col justify-center items-center shadow-lg mt-5 mb-5 rounded-lg bg-HIGHLIGHTB">
+                <div key={index} className="w-[60%] m-auto flex flex-col justify-center items-center shadow-lg mt-5 mb-5 rounded-lg bg-HIGHLIGHTB">
                     <div className="flex border-b text-[1.25rem] w-[80%] text-center justify-evenly items-center bg-WHITE mt-1 rounded-t">
                         <h2>
                             {post.title} by {post.userName}                             
@@ -92,7 +98,7 @@ export default function Home()
                     </p>
                     
                     <img className="h-[40vh]" src={post.picture} alt={post.title} />
-                    <section className="flex justify-evenly w-[60%] bg-WHITE rounded m-1">
+                    <section className="flex justify-evenly w-[40%] bg-WHITE rounded m-1">
                         <button 
                             onClick={() => setWantCommentID( wantCommentID !== post.postID ? post.postID : -1)}
                         >

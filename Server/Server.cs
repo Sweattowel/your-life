@@ -26,6 +26,7 @@ using BCrypt;
 using Server.Controllers;
 using Server;
 using checks;
+using Server.Controllers.checks;
 
 
 namespace Server
@@ -387,12 +388,6 @@ namespace Server.Controllers
             }
         }
     }
-    public class RegisterDetails
-    {
-        public string userName { get; set; }
-        public string passWord { get; set; }
-        public string emailAddress { get; set; }
-    }
     public class LoginDetails
     {
         public int userID { get; set; }
@@ -406,7 +401,7 @@ namespace Server.Controllers
     {
 
         [HttpPost]
-        public async Task<ActionResult<LoginDetails>> RegisterUser([FromBody] RegisterDetails registerDetails)
+        public async Task<ActionResult<LoginDetails>> RegisterUser([FromBody] LoginDetails registerDetails)
         {
             try
             {
@@ -507,6 +502,60 @@ namespace Server.Controllers
             }
         }
     }
+    // REFRESH TOKEN 
+    [Route("/api/TokenRefresh")]
+    [ApiController]
+    public class TokenRefreshController : ControllerBase
+    {
+        public class TokenRefreshRequestModel
+        {
+            public int UserID { get; set; }
+            public string UserName { get; set; }
+        }
+        [HttpPost]
+        public async Task<ActionResult> TokenRefresh([FromBody] TokenRefreshRequestModel requestModel)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(requestModel.UserName))
+                {
+                    return BadRequest("UserName cannot be empty or whitespace.");
+                }
+
+                var authorizationHeader = HttpContext.Request.Headers["Authorization"];
+                if (string.IsNullOrEmpty(authorizationHeader))
+                {
+                    Console.WriteLine("Failed to verify");
+                    return StatusCode(401, "Unauthorized");
+                }
+                var token = authorizationHeader.ToString().Replace("Bearer ", "");
+
+                DateTime expirationTime = ValidateAndExtractExpirationTime(token);
+
+                TimeSpan timeUntilExpiration = expirationTime - DateTime.UtcNow;
+
+                if(timeUntilExpiration <= TimeSpan.FromMinutes(5))
+                {
+                    string newToken = TokenHandler.CreateToken(requestModel.UserID, requestModel.UserName);
+                    return Ok(newToken);
+                }                
+                else {
+                    return Ok(token);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Token refresh failed: {ex.Message}");
+                return StatusCode(500, "Failed to refresh");
+            }
+        }   
+        private DateTime ValidateAndExtractExpirationTime(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var securityToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+            var expirationTime = securityToken.ValidTo.ToUniversalTime();
+            return expirationTime;
+        }
 }
 namespace checks
 {
@@ -543,7 +592,7 @@ namespace checks
             return tokenString;
         }
 
-        public static boolean validateToken(token)
+        public static boolean VerifyToken(token)
         {
             Console.WriteLine(Secret);
             var TokenHandler = new JwtSecurityTokenHandler();
@@ -564,47 +613,7 @@ namespace checks
 
             // Token is valid
             return true;
-        }
-        private class TokenRefreshRequestModel
-        {
-            public int UserID { get; set; }
-            public string UserName { get; set; }
-        }     
-        public static TokenRefresh(TokenRefreshRequestModel requestModel)
-        {
-            if (string.IsNullOrWhiteSpace(requestModel.UserName))
-            {
-                return BadRequest("UserName cannot be empty or whitespace.");
-            }
-
-            var authorizationHeader = HttpContext.Request.Headers["Authorization"];
-            if (string.IsNullOrEmpty(authorizationHeader))
-            {
-                Console.WriteLine("Failed to verify");
-                return StatusCode(401, "Unauthorized");
-            }
-            var token = authorizationHeader.ToString().Replace("Bearer ", "");
-
-            DateTime expirationTime = ValidateAndExtractExpirationTime(token);
-
-            TimeSpan timeUntilExpiration = expirationTime - DateTime.UtcNow;
-
-            if(timeUntilExpiration <= TimeSpan.FromMinutes(5))
-            {
-                string newToken = TokenHandler.CreateToken(requestModel.UserID, requestModel.UserName);
-                return newToken;
-            }                
-            else {
-                return token;
-            }
-        }   
-        private DateTime ValidateAndExtractExpirationTime(string token)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var securityToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
-            var expirationTime = securityToken.ValidTo.ToUniversalTime();
-            return expirationTime;
-        }       
+        } 
     }
     // ENCRYPTION AND DECRYPTION HANDLE
     public class BcryptEncryption

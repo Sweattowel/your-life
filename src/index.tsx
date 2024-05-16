@@ -9,24 +9,26 @@ import Create from './Dependencies/Routes/Create/Create.tsx'
 import Contact from './Dependencies/Routes/Contact/Contact.tsx';
 import Post from './Dependencies/Routes/Post/Post.tsx';
 import Register from './Dependencies/Routes/Profile/Dependencies/AccountHandle/Register.tsx';
+import { ContextProvider } from './ContextProvider/ContextProvider.tsx';
 
 const rootElement: HTMLElement | null = document.getElementById('root');
 
 if (rootElement) {
   ReactDOM.render(
     <React.StrictMode>
-      <Router>
-        <Navigation />
-          <Routes>
-            <Route path='/' Component={Home}/>
-            <Route path='/Profile' Component={ProfileHandle}/>
-            <Route path='/Register' Component={Register}/>
-            <Route path='/Create' Component={Create}/>
-            <Route path='/Contact' Component={Contact}/>
-            <Route path='/posts/user/:userID/postID/:postID/picture/:picture/page/:page' Component={Post} />
-          </Routes>
-      </Router>
-        
+      <ContextProvider>
+        <Router>
+          <Navigation />
+            <Routes>
+              <Route path='/' Component={Home}/>
+              <Route path='/Profile' Component={ProfileHandle}/>
+              <Route path='/Register' Component={Register}/>
+              <Route path='/Create' Component={Create}/>
+              <Route path='/Contact' Component={Contact}/>
+              <Route path='/posts/user/:userID/postID/:postID/picture/:picture/page/:page' Component={Post} />
+            </Routes>
+        </Router>
+      </ContextProvider>        
     </React.StrictMode>,
     rootElement
   );

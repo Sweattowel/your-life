@@ -9,7 +9,7 @@ export default function ProfileHandle()
 
     return(
         <section className="ml-[10vw] w-[90vw]">
-            {!logged ? (
+            {logged ? (
                 <ProfileDetails />
             ) : (
                 <Login />
