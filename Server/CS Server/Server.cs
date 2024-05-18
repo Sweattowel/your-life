@@ -378,6 +378,7 @@ namespace Server.Controllers
                         } else {
                             return StatusCode(500, "Allied mastermind AM ergo therefore i AM!");
                         }
+                        connection.Close();
                     }
                 }
             }
@@ -483,7 +484,7 @@ namespace Server.Controllers
                                 string hashedPassword = reader.GetString(reader.GetOrdinal("passWord"))
                                 string email = reader.GetString(reader.GetOrdinal("emailAddress"));
                                 if (BcryptEncryption.Decrypt(password, hashedPassword)){
-                                    return Ok(new LoginDetails { userID = userID, userName = username, emailAddress = email });
+                                    return Ok({ userID:userID, userName: username, emailAddress: email });
                                 }
                                 return Unauthorized("Invalid username/email or password");
                             }

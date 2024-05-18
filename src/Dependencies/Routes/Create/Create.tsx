@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useMyContext } from "../../../ContextProvider/ContextProvider.tsx";
+import API from "../../../INTERCEPTOR/API.tsx";
 
 
 interface item
@@ -45,11 +46,13 @@ export default function Create()
         
         formData.append("title", item.title);
         formData.append("message", item.message);
-        formData.append("userID", userID); 
+        // TODO dont forget to convert this back in the back end or account for the string
+        formData.append("userID", userID.toString()); 
         formData.append("userName", userName); 
         formData.append("Picture", item.pictureFile);
 
-        const response = await axios.post(`${server}/api/createPost`, formData)
+        const response = await API.post(`${server}/api/createPost`, formData)
+        
         switch (response.status) {
             case 200:
                 console.log('Success')
