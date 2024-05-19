@@ -46,6 +46,7 @@ export default function Login()
                 switch (response.status) {
                     case 200:
                         setError("Successfully logged in")
+                        console.log(response)
                         setAuthenticated(true)
                         setUserID(response.data.userID)
                         setUserName(response.data.userName)

@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useMyContext } from "../../../../../ContextProvider/ContextProvider.tsx";
 
 
 
@@ -21,7 +22,18 @@ export default function ProfileDetails()
     ])
     const server = process.env.REACT_APP_SERVER_ADDRESS
     const params = useParams();
-
+    const [            
+        authenticated,
+        setAuthenticated,
+        admin,
+        setAdmin,
+        userID,
+        setUserID,
+        userName,
+        setUserName,
+        email,
+        setEmail, ] = useMyContext()
+        
     class handlePosts
     {
         static async getPosts() {
@@ -61,7 +73,7 @@ export default function ProfileDetails()
         <section className="bg-gradient-to-r from-HIGHLIGHTB to-HIGHLIGHTA w-[90vw] h-[100vh]">
             <div className="bg-WHITE h-[10rem] flex justify-evenly items-center">
                 <h1 className="text-[1.5rem] bg-HIGHLIGHTA text-WHITE p-5 rounded">
-                    Earl Jacob Jones
+                    {userName}
                 </h1>
                 <img className="rounded-full h-[8rem] shadow-lg" src="https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg" alt="You" />
                 {posts.length > 0 && posts.map((post, index) => (
