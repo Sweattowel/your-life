@@ -1,4 +1,5 @@
-import express from "express";
+const require = createRequire(import.meta.url);
+const express = require("express");
 import mysql, { FieldPacket, QueryResult, RowDataPacket } from "mysql2";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -12,7 +13,7 @@ import jwt from 'jsonwebtoken'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const require = createRequire(import.meta.url);
+
 const dotenv = require("dotenv");
 dotenv.config();
 const app = express();
