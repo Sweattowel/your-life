@@ -48,9 +48,9 @@ export default function Login()
                         setError("Successfully logged in")
                         console.log(response)
                         setAuthenticated(true)
-                        setUserID(response.data.userID)
-                        setUserName(response.data.userName)
-                        setEmail(response.data.userName)
+                        setUserID(response.data.data.userID)
+                        setUserName(response.data.data.userName)
+                        setEmail(response.data.data.userName)
                         break;
                     case 409:
                         setError("Bad Data")
