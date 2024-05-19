@@ -198,8 +198,8 @@ app.post('/api/Login', async (req, res) => {
             }
             console.log(result)
             if (result.length === 1) {
-                const verifyPass = await encryptionHandler.decrypt(result[0].passWord)
-                if (verifyPass === passWord){
+                const verified = await encryptionHandler.decrypt(passWord, result[0].passWord)
+                if (verified){
                     const newToken = await tokenHandler.createToken(result[0].userID, result[0].userName);
                     console.log('success');
                     return res.status(200).json({ data: result[0], token: newToken });                    
