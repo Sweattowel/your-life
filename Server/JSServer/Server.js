@@ -1,21 +1,20 @@
-const express = require("express");
-const mysql = require("mysql2");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const multer = require('multer')
-const path = require('path')
-const dirname = require('path')
-const fileURLToPath = require("url")
-const jwt = require('jsonwebtoken')
+import express from "express";
+import mysql from "mysql2";
+import bodyParser from "body-parser";
+import cors from "cors";
+import multer from 'multer';
+import path, { dirname } from 'path';
+import { fileURLToPath } from "url";
+import jwt from 'jsonwebtoken';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(__filename);
 
-const dotenv = require("dotenv");
+import dotenv from "dotenv";
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 3001;
-const bcrypt = require('bcrypt')
+import bcrypt from 'bcrypt';
 
 // URL ACCESS LIMITATION
 
