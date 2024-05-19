@@ -1,17 +1,15 @@
 const express = require("express");
-import mysql, { FieldPacket, QueryResult, RowDataPacket } from "mysql2";
-import bodyParser from "body-parser";
-import cors from "cors";
-import { createRequire } from "module";
-import multer from "multer";
-import path, { resolve } from "path";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import jwt from 'jsonwebtoken'
-
+const mysql = require("mysql2");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const multer = require('multer')
+const path = require('path')
+const dirname = require('path')
+const fileURLToPath = require("url")
+const jwt = require('jsonwebtoken')
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = path.dirname(__filename);
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -72,7 +70,7 @@ class tokenHandler {
     static checkTokenTime(token: string){
         try {
             // MINIMUM IS 300 seconds as 5 minutes
-            const decoded = jwt.decode(token) as jwt.JwtPayload
+            const decoded = jwt.decode(token)
             if (!decoded || !decoded.exp || !this.checkToken(token)) return 0
             
             const currentTime = Math.floor(Date.now() / 1000);
