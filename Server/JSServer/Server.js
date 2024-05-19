@@ -165,7 +165,7 @@ app.post('/api/Register', async (req, res) => {
             } else {
                 const hashedPassWord = await encryptionHandler.encrypt(passWord);
                 db.execute(CREATESQL, [userName, emailAddress, hashedPassWord]);
-                
+
                 console.log('success')
                 res.status(200).json({ message: 'Successfully made account' });
             }
@@ -178,17 +178,14 @@ app.post('/api/Register', async (req, res) => {
 // LOGIN HANDLER
 app.post('/api/Login', async ( req, res ) => {
     try {
-        // DEFINE AND CHECK IF DATA IS PRESENT IN REQ BODY
+        
         const { userName, emailAddress, passWord } = req.body
         if (!userName && !emailAddress || !passWord) res.status(422).json({ error: 'Bad request: Unprocessable Entity'})
-        // ALERT USER
+        
         console.log('Received login attempt')
-        // DEFINE SQL
+        
         const LOGINUSERNAMESQL = 'SELECT * FROM USERS WHERE userName = ? AND passWord = ?'
         const LOGINEMAILSQL = 'SELECT * FROM USERS WHERE emailAddress = ? AND passWord = ?'
-        // CHOOSE QUERY BASED ON REQ BODY
-
-        // WHY ? i want to be able to log in using either the userName or the Email as provided by the user
 
         const query = userName ? LOGINUSERNAMESQL : LOGINEMAILSQL
         const credentials = userName ? [userName, passWord] : [emailAddress, passWord]
@@ -198,8 +195,8 @@ app.post('/api/Login', async ( req, res ) => {
                 console.log(err)
                 res.status(500).json("Internal Server Error")
             } else {
-                const newToken = await tokenHandler.createToken(queryResult[0].userID, queryResult[0].userName)
-                const data = {userID: queryResult[0].userID, emailAddress: queryResult[0].emailAddress, userName: queryResult[0].userName, token : newToken}
+                const newToken = await tokenHandler.createToken(queryResult.userID, queryResult.userName)
+                const data = {userID: queryResult.userID, emailAddress: queryResult.emailAddress, userName: queryResult.userName, token : newToken}
                 res.status(200).json({ data: data })
             }
         })
