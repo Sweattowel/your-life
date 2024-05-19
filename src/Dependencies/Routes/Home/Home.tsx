@@ -87,7 +87,9 @@ export default function Home()
     useEffect(() => {
 
         let cache = sessionStorage.getItem("posts")
-        if (!cache || cache.length === 0){
+        let cleanCache = JSON.parse(cache!)
+
+        if (!cleanCache || cleanCache.length === 0){
             handlePosts.getPosts();
         }
         

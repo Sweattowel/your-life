@@ -34,7 +34,7 @@ export default function Login()
     })
     class AccountHandle
     {
-        static handleLogin = async () => {                       
+        static handleRegister = async () => {                       
             try {
                 console.log('Received')
                 const response = await axios.post(`${server}/api/Register`, {
@@ -93,7 +93,7 @@ export default function Login()
                         }}
                         className="border rounded p-1" type="text" typeof="password" name="password" id="userName" placeholder="Enter Password"
                     />
-                    <button onClick={() => AccountHandle.handleLogin()} className="bg-HIGHLIGHTA text-WHITE w-[40%] rounded shadow-lg hover:opacity-90" type="button" value="Login">Login</button>
+                    <button onClick={() => AccountHandle.handleRegister()} className="bg-HIGHLIGHTA text-WHITE w-[40%] rounded shadow-lg hover:opacity-90" type="button" value="Register">Register</button>
                     <p className="h-[2rem]">{error}</p>
                 </section>
                 <section className="p-5">

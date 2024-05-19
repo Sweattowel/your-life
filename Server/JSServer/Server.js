@@ -158,7 +158,7 @@ app.post('/api/Register', async (req, res) => {
         if (prevUsersCount === 0){
             // HASH PASSWORD BEFORE STORING
             const hashedPassWord = await encryptionHandler.encrypt(passWord)
-            await db.execute(CREATESQL, [userName, emailAddress, hashedPassWord]);
+            db.execute(CREATESQL, [userName, emailAddress, hashedPassWord]);
             // SUCCESS
             res.status(200).json({ message: 'Successfully made account'})
         } else {
