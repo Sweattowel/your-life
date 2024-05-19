@@ -190,12 +190,13 @@ app.post('/api/Login', async ( req, res ) => {
         const query = userName ? LOGINUSERNAMESQL : LOGINEMAILSQL
         const credentials = userName ? [userName, passWord] : [emailAddress, passWord]
         
-        db.execute(query, credentials, async (err, results) => {
-            if (err || results.length > 1) {
+        db.execute(query, credentials, async (err, result) => {
+            if (err || result.length > 1) {
                 console.log(err)
                 res.status(500).json("Internal Server Error")
             } else {
-                const newToken = await tokenHandler.createToken(results[0].userID, results[0].userName)
+                console.log(result)
+                const newToken = await tokenHandler.createToken(result.userID, result.userName)
                 console.log('success')
                 res.status(200).json({ data: results, token: newToken })
             }
