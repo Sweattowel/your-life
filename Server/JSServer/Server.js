@@ -202,7 +202,7 @@ app.post('/api/Login', async (req, res) => {
                 if (verified){
                     const newToken = await tokenHandler.createToken(result[0].userID, result[0].userName);
                     console.log('success');
-                    return res.status(200).json({ data: result[0], token: newToken });                    
+                    return res.status(200).json(result[0], newToken);                    
                 }
             } else {
                 return res.status(401).json({ error: 'Invalid credentials' });
