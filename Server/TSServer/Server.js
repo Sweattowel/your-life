@@ -54,11 +54,11 @@ const storage = multer.diskStorage({
 const upload = multer( { storage: storage })
 
 // TEMP HOLD
-const REACT_APP_TOKEN_KEY: string = 'privatekey'
+const REACT_APP_TOKEN_KEY = 'privatekey'
 // POST CHECK START
 // TOKEN CREATION AND VERIFICATION
 class tokenHandler {
-    static checkToken = async (token: string) => {
+    static checkToken = async (token) => {
         try {
             const decoded = await jwt.verify(token, REACT_APP_TOKEN_KEY)            
             return true
@@ -67,7 +67,7 @@ class tokenHandler {
             return false
         }
     }
-    static checkTokenTime(token: string){
+    static checkTokenTime(token){
         try {
             // MINIMUM IS 300 seconds as 5 minutes
             const decoded = jwt.decode(token)
@@ -82,7 +82,7 @@ class tokenHandler {
             return 0
         }
     }
-    static createToken = async (userID: number, userName: string) => {
+    static createToken = async (userID, userName) => {
         try {
             jwt.sign({ userID, userName }, REACT_APP_TOKEN_KEY, { expiresIn: '1h'}, (err, token) => {
                 if (err) {
@@ -97,7 +97,7 @@ class tokenHandler {
             return null
         }
     }
-    static async handleRefresh(userID: number, userName: string, token: string) {
+    static async handleRefresh(userID, userName, token) {
         try {
             // DEFINE AND CHECK IF DATA IS PRESENT IN REQ BODY
             if (!token || !userID || !userName) return token
@@ -118,7 +118,7 @@ class tokenHandler {
 }
 // ENCRYPTION AND DECRYPTION
 class encryptionHandler {
-    static async encrypt(target: string){
+    static async encrypt(target){
         try {
             const response = await bcrypt.hash(target, 10)
             
@@ -129,7 +129,7 @@ class encryptionHandler {
             return null
         }
     }
-    static async decrypt(target: string, hashedTarget: string){
+    static async decrypt(target, hashedTarget){
         try {
             const check = await bcrypt.compare(target, hashedTarget)
             
@@ -246,22 +246,17 @@ app.post('/api/GetPosts', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error'})
     }
 })
-interface MulterFile {
-    path: string,
-    filename: string,
-    mimetype: string,
-    size: number
-}
+
 app.post('/api/CreatePost', upload.single('picture'), async (req, res) => {
     try {
         console.log("Received Create post")
 
         const { title, message, userID, userName, tags } = req.body
-        const file: MulterFile = req.file as MulterFile;
+        const file = req.file;
         
         if (!file){res.status(404).json({ error: 'Missing File'})}
 
-        const token: string = req.headers['authorization'] || ''
+        const token = req.headers['authorization'] || ''
         if (!token ||!tokenHandler.checkToken(token)){
             res.status(401).json({ error: 'Unauthorized'})
         } 
@@ -296,9 +291,9 @@ app.post('/api/UpdateProfile', upload.single('picture'), async (req, res) => {
         console.log("Received update request")
 
         const { userID, userName, passWord, emailAddress } = req.body
-        const file: MulterFile = req.file as MulterFile
+        const file = req.file
 
-        const token: string = req.headers['authorization'] || ''
+        const token = req.headers['authorization'] || ''
         if (!token ||!tokenHandler.checkToken(token)){
             res.status(401).json({ error: 'Unauthorized'})
         } 
