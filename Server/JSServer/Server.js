@@ -153,16 +153,14 @@ app.post('/api/Register', async (req, res) => {
         console.log('Received Registration attempt');
         
         // DEFINE SQL
-        const CHECKSQL = 'SELECT COUNT(*) as count FROM USERS WHERE userName = ? OR emailAddress = ?';
+        const CHECKSQL = 'SELECT * FROM USERS WHERE userName = ? OR emailAddress = ?';
         const CREATESQL = 'INSERT INTO USERS (userName, emailAddress, passWord) VALUES (?, ?, ?)';
         
         // CHECK IF USER ALREADY EXISTS
         const prevUsers = await db.execute(CHECKSQL, [userName, emailAddress]);
-        console.log(prevUsers)
-        const prevUsersCount = prevUsers[0].count; // Adjust this based on the actual structure of the result
         
         // ENSURE NO USERS WITH THE NAME/EMAIL ALREADY EXIST
-        if (prevUsersCount === 0) {
+        if (prevUsers.length === 0) {
             // HASH PASSWORD BEFORE STORING
             const hashedPassWord = await encryptionHandler.encrypt(passWord);
             await db.execute(CREATESQL, [userName, emailAddress, hashedPassWord]);
