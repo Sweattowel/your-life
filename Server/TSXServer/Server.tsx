@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import mysql, { FieldPacket, QueryResult, RowDataPacket } from "mysql2";
 import bodyParser from "body-parser";
 import cors from "cors";
