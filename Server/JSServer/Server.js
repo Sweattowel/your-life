@@ -197,7 +197,7 @@ app.post('/api/Login', async (req, res) => {
                 console.log(err);
                 return res.status(500).json({ error: 'Internal Server Error' });
             }
-
+            console.log(result)
             if (result.length === 1) {
                 const newToken = await tokenHandler.createToken(result[0].userID, result[0].userName);
                 console.log('success');
