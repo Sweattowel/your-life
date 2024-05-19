@@ -183,7 +183,7 @@ app.post('/api/Login', async (req, res) => {
             return res.status(422).json({ error: 'Bad request: Unprocessable Entity' });
         }
         
-        console.log('Received login attempt');
+        console.log('Received login attempt', userName, emailAddress, passWord);
         
         const hashedPassWord = await encryptionHandler.encrypt(passWord);
         const LOGINUSERNAMESQL = 'SELECT * FROM USERS WHERE userName = ?'
@@ -199,7 +199,7 @@ app.post('/api/Login', async (req, res) => {
             }
             console.log(result)
             if (result.length === 1) {
-                const verifyPass = await encryptionHandler.decrypt(result.password)
+                const verifyPass = await encryptionHandler.decrypt(result[0].passWord)
                 if (verifyPass === passWord){
                     const newToken = await tokenHandler.createToken(result[0].userID, result[0].userName);
                     console.log('success');
