@@ -157,19 +157,19 @@ app.post('/api/Register', async (req, res) => {
         const CREATESQL = 'INSERT INTO USERS (userName, emailAddress, passWord) VALUES (?, ?, ?)';
         
         // CHECK IF USER ALREADY EXISTS
-        const [prevUsers] = await db.execute(CHECKSQL, [userName, emailAddress]);
-        console.log(prevUsers, prevUsers.length)
-        // ENSURE NO USERS WITH THE NAME/EMAIL ALREADY EXIST
-        if (prevUsers.length === 0) {
-            // HASH PASSWORD BEFORE STORING
-            const hashedPassWord = await encryptionHandler.encrypt(passWord);
-            await db.execute(CREATESQL, [userName, emailAddress, hashedPassWord]);
-            // SUCCESS
-            console.log('success')
-            res.status(200).json({ message: 'Successfully made account' });
-        } else {
-            res.status(409).json({ error: 'User already exists' });
-        }
+        db.execute(CHECKSQL, [userName, emailAddress], async (err, results) => {
+            if (err) {
+                res.status(500).json({ error: 'Internal Server Error' });
+            } else if (results.length > 0) {
+                res.status(409).json({ error: 'User already exists' });
+            } else {
+                const hashedPassWord = await encryptionHandler.encrypt(passWord);
+                db.execute(CREATESQL, [userName, emailAddress, hashedPassWord]);
+                
+                console.log('success')
+                res.status(200).json({ message: 'Successfully made account' });
+            }
+        });
     } catch (error) {
         console.log('FAILURE IN REGISTRATION', error);
         res.status(500).json({ error: 'Internal Server Error' });
