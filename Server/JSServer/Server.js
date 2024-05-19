@@ -144,36 +144,37 @@ class encryptionHandler {
 app.post('/api/Register', async (req, res) => {
     try {
         // DEFINE AND CHECK IF DATA IS PRESENT IN REQ BODY
-        const { userName, emailAddress, passWord } = req.body
-        if (!userName || !emailAddress || !passWord) res.status(422).json({ error: 'Bad request: Unprocessable Entity'})
-        // ALERT USER
-        console.log('Received Registration attempt')
-        // DEFINE SQL
-        const CHECKSQL = 'SELECT COUNT(*) as count FROM USERS WHERE userName = ? OR emailAddress = ?'
-        const CREATESQL = 'INSERT INTO USERS (userName, emailAddress, passWord) VALUES (?, ?, ?)'
-        // CANT USE LENGTH SO WE USE SQL COUNT CALL TO GET RESULTS
-        const prevUsers = await db.query(CHECKSQL, [userName, emailAddress]);
-        const prevUsersCount = prevUsers[0].COUNT
-        // ENSURE NO USERS WITH THE NAME/EMAIL ALREADY EXIST
-        if (prevUsersCount === 0){
-            // HASH PASSWORD BEFORE STORING
-            const hashedPassWord = await encryptionHandler.encrypt(passWord)
-            db.execute(CREATESQL, [userName, emailAddress, hashedPassWord], (err, result) => {
-                if (err) {
-                    res.status(500).json({ error: 'Internal Server Error'})
-                } else {
-                    res.status(200).json({ message: 'Successfully made account'})
-                }
-            });
-        } else {
-            res.status(409).json({ error: 'User already exists'})
+        const { userName, emailAddress, passWord } = req.body;
+        if (!userName || !emailAddress || !passWord) {
+            return res.status(422).json({ error: 'Bad request: Unprocessable Entity' });
         }
-
+        
+        // ALERT USER
+        console.log('Received Registration attempt');
+        
+        // DEFINE SQL
+        const CHECKSQL = 'SELECT COUNT(*) as count FROM USERS WHERE userName = ? OR emailAddress = ?';
+        const CREATESQL = 'INSERT INTO USERS (userName, emailAddress, passWord) VALUES (?, ?, ?)';
+        
+        // CHECK IF USER ALREADY EXISTS
+        const [prevUsers] = await db.execute(CHECKSQL, [userName, emailAddress]);
+        const prevUsersCount = prevUsers[0].count; // Adjust this based on the actual structure of the result
+        
+        // ENSURE NO USERS WITH THE NAME/EMAIL ALREADY EXIST
+        if (prevUsersCount === 0) {
+            // HASH PASSWORD BEFORE STORING
+            const hashedPassWord = await encryptionHandler.encrypt(passWord);
+            await db.execute(CREATESQL, [userName, emailAddress, hashedPassWord]);
+            // SUCCESS
+            res.status(200).json({ message: 'Successfully made account' });
+        } else {
+            res.status(409).json({ error: 'User already exists' });
+        }
     } catch (error) {
-        console.log('FAILURE IN REGISTRATION', error)
-        res.status(500).json({ error: 'Internal Server Error'})
+        console.log('FAILURE IN REGISTRATION', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
-})
+});
 // LOGIN HANDLER
 app.post('/api/Login', async ( req, res ) => {
     try {
