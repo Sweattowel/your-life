@@ -198,7 +198,7 @@ app.post('/api/Login', async ( req, res ) => {
                 console.log(result)
                 const newToken = await tokenHandler.createToken(result.userID, result.userName)
                 console.log('success')
-                res.status(200).json({ data: results, token: newToken })
+                res.status(200).json({ data: result, token: newToken })
             }
         })
     } catch (error) {
