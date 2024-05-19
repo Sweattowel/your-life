@@ -195,7 +195,7 @@ app.post('/api/Login', async ( req, res ) => {
                 console.log(err)
                 res.status(500).json("Internal Server Error")
             } else {
-                const newToken = await tokenHandler.createToken(queryResult.userID, queryResult.userName)
+                const newToken = await tokenHandler.createToken(results[0].userID, results[0].userName)
                 console.log('success')
                 res.status(200).json({ data: results, token: newToken })
             }
