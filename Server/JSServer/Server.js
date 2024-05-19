@@ -185,14 +185,13 @@ app.post('/api/Login', async (req, res) => {
         
         console.log('Received login attempt', userName, emailAddress, passWord);
         
-        const hashedPassWord = await encryptionHandler.encrypt(passWord);
         const LOGINUSERNAMESQL = 'SELECT * FROM USERS WHERE userName = ?'
         const LOGINEMAILSQL = 'SELECT * FROM USERS WHERE emailAddress = ?';
 
         const query = userName ? LOGINUSERNAMESQL : LOGINEMAILSQL;
-        const credentials = userName ? [userName, hashedPassWord] : [emailAddress, hashedPassWord];
+        const credentials = userName ? userName : emailAddress;
 
-        db.execute(query, credentials, async (err, result) => {
+        db.execute(query, [credentials], async (err, result) => {
             if (err) {
                 console.log(err);
                 return res.status(500).json({ error: 'Internal Server Error' });
