@@ -186,8 +186,8 @@ app.post('/api/Login', async (req, res) => {
         console.log('Received login attempt');
         
         const hashedPassWord = await encryptionHandler.encrypt(passWord);
-        const LOGINUSERNAMESQL = 'SELECT * FROM USERS WHERE userName = ? AND passWord = ?';
-        const LOGINEMAILSQL = 'SELECT * FROM USERS WHERE emailAddress = ? AND passWord = ?';
+        const LOGINUSERNAMESQL = 'SELECT * FROM USERS WHERE userName = ?'
+        const LOGINEMAILSQL = 'SELECT * FROM USERS WHERE emailAddress = ?';
 
         const query = userName ? LOGINUSERNAMESQL : LOGINEMAILSQL;
         const credentials = userName ? [userName, hashedPassWord] : [emailAddress, hashedPassWord];
@@ -199,9 +199,12 @@ app.post('/api/Login', async (req, res) => {
             }
             console.log(result)
             if (result.length === 1) {
-                const newToken = await tokenHandler.createToken(result[0].userID, result[0].userName);
-                console.log('success');
-                return res.status(200).json({ data: result[0], token: newToken });
+                const verifyPass = await encryptionHandler.decrypt(result.password)
+                if (verifyPass === passWord){
+                    const newToken = await tokenHandler.createToken(result[0].userID, result[0].userName);
+                    console.log('success');
+                    return res.status(200).json({ data: result[0], token: newToken });                    
+                }
             } else {
                 return res.status(401).json({ error: 'Invalid credentials' });
             }
