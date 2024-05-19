@@ -1,4 +1,3 @@
-const require = createRequire(import.meta.url);
 const express = require("express");
 import mysql, { FieldPacket, QueryResult, RowDataPacket } from "mysql2";
 import bodyParser from "body-parser";
