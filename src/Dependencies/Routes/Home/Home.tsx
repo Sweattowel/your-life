@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { useMyContext } from "../../../ContextProvider/ContextProvider.tsx";
 
 const placeHolderPosts = [
     {
@@ -35,18 +36,31 @@ const placeHolderPosts = [
 ]
 export default function Home()
 {
+    const server = process.env.REACT_APP_SERVER_ADDRESS
+    const [            
+        authenticated,
+        setAuthenticated,
+        admin,
+        setAdmin,
+        userID,
+        setUserID,
+        userName,
+        setUserName,
+        email,
+        setEmail, ] = useMyContext()
+        
     const [wantCommentID, setWantCommentID] = useState(-1)
     const [posts, setPosts] = useState(placeHolderPosts)
-    const server = process.env.REACT_APP_SERVER_ADDRESS
+    
 
     class handlePosts
     {
         static async getPosts() {
             try {
-                const response = await axios.post(`${server}/api/getPosts`, 
+                const response = await axios.post(`${server}/api/GetPosts`, 
                 {
-                    UserID: -1,
-                    PostID: -1
+                    UserID: null,
+                    PostID: null
                 })
                 switch (response.status) {
                     case 200:

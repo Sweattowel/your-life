@@ -228,7 +228,7 @@ app.post('/api/GetPosts', async (req, res) => {
         const GETPOSTSSQL = 'SELECT * FROM POSTS'
         const SPECIFICGETPOSTSQL = 'SELECT * FROM POSTS WHERE userID = ?'
 
-        const query = req.body.userID ? GETPOSTSSQL : SPECIFICGETPOSTSQL
+        const query = req.body.userID ? SPECIFICGETPOSTSQL : GETPOSTSSQL
         const credentials = req.body.userID ? req.body.userID : null
 
         db.execute(query, credentials, (err, results) => {

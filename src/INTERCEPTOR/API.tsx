@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useMyContext } from "../ContextProvider/ContextProvider";
+import { useMyContext } from "../ContextProvider/ContextProvider.tsx";
 
 const API = axios.create({
     baseURL: process.env.REACT_APP_SERVER_ADDRESS
