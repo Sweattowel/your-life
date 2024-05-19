@@ -157,7 +157,8 @@ app.post('/api/Register', async (req, res) => {
         const CREATESQL = 'INSERT INTO USERS (userName, emailAddress, passWord) VALUES (?, ?, ?)';
         
         // CHECK IF USER ALREADY EXISTS
-        const [prevUsers] = await db.execute(CHECKSQL, [userName, emailAddress]);
+        const prevUsers = await db.execute(CHECKSQL, [userName, emailAddress]);
+        console.log(prevUsers)
         const prevUsersCount = prevUsers[0].count; // Adjust this based on the actual structure of the result
         
         // ENSURE NO USERS WITH THE NAME/EMAIL ALREADY EXIST
