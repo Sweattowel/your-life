@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useMyContext } from "../ContextProvider/ContextProvider.tsx";
 
 const API = axios.create({
     baseURL: process.env.REACT_APP_SERVER_ADDRESS
@@ -17,7 +16,7 @@ API.interceptors.request.use((config) => {
     
     const token = fetchToken();
 
-    if (token) {
+    if (token !== '') {
         config.headers.Authorization = `Bearer ${token}`;
     }
     return config

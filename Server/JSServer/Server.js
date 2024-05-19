@@ -226,7 +226,7 @@ app.post('/api/TokenRefresh', async (req, res) => {
 app.post('/api/GetPosts', async (req, res) => {
     try {
         console.log('Received GetPost request')
-        
+
         const GETPOSTSSQL = 'SELECT * FROM POSTS'
         const SPECIFICGETPOSTSQL = 'SELECT * FROM POSTS WHERE userID = ?'
 
@@ -238,7 +238,7 @@ app.post('/api/GetPosts', async (req, res) => {
                 console.log(err)
                 res.status(500).json({ error: "Internal Server Error"})
             } else {
-                res.status(200).json({ data: results})
+                res.status(200).json( results )
             }
         })
 
