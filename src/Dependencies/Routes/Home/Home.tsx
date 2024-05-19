@@ -57,14 +57,13 @@ export default function Home()
     {
         static async getPosts() {
             try {
-                const response = await axios.post(`${server}/api/GetPosts`, 
-                {
-                    UserID: null,
-                    PostID: null
-                })
+                const response = await axios.post(`${server}/api/GetPosts`, { UserID: null })
+
                 switch (response.status) {
                     case 200:
-                        setPosts(response.data)
+                        
+                    console.log(response.data)
+                    setPosts(response.data)
                         sessionStorage.setItem("posts", JSON.stringify(response.data))
                         break;
                     case 404:
@@ -96,7 +95,7 @@ export default function Home()
     return(
         <section className="ml-[10vw] w-[85vw] h-full flex flex-col justify-evenly">
 
-            {posts.map((post, index) => (
+            {posts.length > 0 && posts.map((post, index) => (
                 <div key={index} className="w-[60%] m-auto flex flex-col justify-center items-center shadow-lg mt-5 mb-5 rounded-lg bg-HIGHLIGHTB">
                     <div className="flex border-b text-[1.25rem] w-[80%] text-center justify-evenly items-center bg-WHITE mt-1 rounded-t">
                         <h2>

@@ -49,13 +49,16 @@ export default function Create()
         // TODO dont forget to convert this back in the back end or account for the string
         formData.append("userID", userID.toString()); 
         formData.append("userName", userName); 
-        formData.append("Picture", item.pictureFile);
+        formData.append("picture", item.pictureFile);
 
         const response = await API.post(`${server}/api/createPost`, formData)
         
         switch (response.status) {
             case 200:
                 console.log('Success')
+                break;
+            case 500:
+                console.log('UNAUTHORIZED')
                 break;
             default:
                 console.log('Epic fail')

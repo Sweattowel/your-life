@@ -225,6 +225,8 @@ app.post('/api/TokenRefresh', async (req, res) => {
 // POST HANDLER
 app.post('/api/GetPosts', async (req, res) => {
     try {
+        console.log('Received GetPost request')
+        
         const GETPOSTSSQL = 'SELECT * FROM POSTS'
         const SPECIFICGETPOSTSQL = 'SELECT * FROM POSTS WHERE userID = ?'
 
