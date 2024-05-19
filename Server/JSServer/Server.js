@@ -188,10 +188,11 @@ app.post('/api/Login', async ( req, res ) => {
         const LOGINEMAILSQL = 'SELECT * FROM USERS WHERE emailAddress = ? AND passWord = ?'
 
         const query = userName ? LOGINUSERNAMESQL : LOGINEMAILSQL
-        const credentials = userName ? [userName, passWord] : [emailAddress, passWord]
+        const hashedPassWord = await encryptionHandler.encrypt(passWord)
+        const credentials = userName ? [userName, hashedPassWord] : [emailAddress, hashedPassWord]
         
         db.execute(query, credentials, async (err, result) => {
-            if (err || result.length > 1) {
+            if (err || result.length > 1 || result.length === 0) {
                 console.log(err)
                 res.status(500).json("Internal Server Error")
             } else {
