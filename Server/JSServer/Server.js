@@ -176,37 +176,43 @@ app.post('/api/Register', async (req, res) => {
     }
 });
 // LOGIN HANDLER
-app.post('/api/Login', async ( req, res ) => {
+app.post('/api/Login', async (req, res) => {
     try {
+        const { userName, emailAddress, passWord } = req.body;
+        if ((!userName && !emailAddress) || !passWord) {
+            return res.status(422).json({ error: 'Bad request: Unprocessable Entity' });
+        }
         
-        const { userName, emailAddress, passWord } = req.body
-        if (!userName && !emailAddress || !passWord) res.status(422).json({ error: 'Bad request: Unprocessable Entity'})
+        console.log('Received login attempt');
         
-        console.log('Received login attempt')
-        
-        const LOGINUSERNAMESQL = 'SELECT * FROM USERS WHERE userName = ? AND passWord = ?'
-        const LOGINEMAILSQL = 'SELECT * FROM USERS WHERE emailAddress = ? AND passWord = ?'
+        const LOGINUSERNAMESQL = 'SELECT * FROM USERS WHERE userName = ? AND passWord = ?';
+        const LOGINEMAILSQL = 'SELECT * FROM USERS WHERE emailAddress = ? AND passWord = ?';
 
-        const query = userName ? LOGINUSERNAMESQL : LOGINEMAILSQL
-        const hashedPassWord = await encryptionHandler.encrypt(passWord)
-        const credentials = userName ? [userName, hashedPassWord] : [emailAddress, hashedPassWord]
+        const query = userName ? LOGINUSERNAMESQL : LOGINEMAILSQL;
+        const hashedPassWord = await encryptionHandler.encrypt(passWord);
+        const credentials = userName ? [userName, hashedPassWord] : [emailAddress, hashedPassWord];
         
         db.execute(query, credentials, async (err, result) => {
-            if (err || result.length > 1 || result.length === 0) {
-                console.log(err)
-                res.status(500).json("Internal Server Error")
-            } else {
-                console.log(result)
-                const newToken = await tokenHandler.createToken(result.userID, result.userName)
-                console.log('success')
-                res.status(200).json({ data: result, token: newToken })
+            if (err) {
+                console.log('Database error:', err);
+                return res.status(500).json({ error: 'Internal Server Error' });
             }
-        })
+            
+            if (result.length !== 1) {
+                console.log('Invalid login credentials:', result);
+                return res.status(401).json({ error: 'Invalid login credentials' });
+            }
+            
+            const user = result[0];
+            const newToken = await tokenHandler.createToken(user.userID, user.userName);
+            console.log('Login successful:', user.userName);
+            res.status(200).json({ data: user, token: newToken });
+        });
     } catch (error) {
-        console.log('FAILURE IN LOGIN', error)
-        res.status(500).json({ error: 'Internal Server Error'})
+        console.log('FAILURE IN LOGIN', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
-})
+});
 // TOKEN REFRESH CALL SPECIFIC
 app.post('/api/TokenRefresh', async (req, res) => {
     try {
