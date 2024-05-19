@@ -158,9 +158,13 @@ app.post('/api/Register', async (req, res) => {
         if (prevUsersCount === 0){
             // HASH PASSWORD BEFORE STORING
             const hashedPassWord = await encryptionHandler.encrypt(passWord)
-            db.execute(CREATESQL, [userName, emailAddress, hashedPassWord]);
-            // SUCCESS
-            res.status(200).json({ message: 'Successfully made account'})
+            db.execute(CREATESQL, [userName, emailAddress, hashedPassWord], (err, result) => {
+                if (err) {
+                    res.status(500).json({ error: 'Internal Server Error'})
+                } else {
+                    res.status(200).json({ message: 'Successfully made account'})
+                }
+            });
         } else {
             res.status(409).json({ error: 'User already exists'})
         }
