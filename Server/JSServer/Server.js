@@ -21,6 +21,7 @@ import bcrypt from 'bcrypt';
 const corsOptions = {
     origin: "*",
     optionsSuccessStatus: 200,
+    credentials: true
 };
 app.use(cors(corsOptions));
 
@@ -211,7 +212,8 @@ app.post('/api/Login', async (req, res) => {
 
                     res.cookie('authToken', newToken, {
                         httpOnly: true, 
-                        maxAge: 3600000 
+                        maxAge: 3600000,
+                        secure: false
                     });
                     return res.status(200).json({...result[0], token: newToken});                    
                 } else {
