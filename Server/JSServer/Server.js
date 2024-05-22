@@ -83,14 +83,17 @@ class tokenHandler {
     }
     static createToken = async (userID, userName) => {
         try {
-            jwt.sign({ userID, userName }, REACT_APP_TOKEN_KEY, { expiresIn: '1h'}, (err, token) => {
-                if (err) {
-                    console.log(err)
-                    return null
-                } else {
-                    return token
-                }
-            })            
+            console.log(`Creating Token for ${userID}${userName}`)
+            return new Promise(( resolve, reject ) => {
+                jwt.sign({ userID, userName }, REACT_APP_TOKEN_KEY, { expiresIn: "1h"}, ( err, token ) => {
+                    if (err) {
+                        console.log(err)
+                        reject(err)
+                    } else {
+                        resolve(token)
+                    }
+                })
+            })       
         } catch (error) {
             console.log(error)
             return null
@@ -203,6 +206,8 @@ app.post('/api/Login', async (req, res) => {
                 if (verified && newToken){
                     console.log('success', newToken);
                     return res.status(200).json({...result[0], token: newToken});                    
+                } else {
+                    return res.status(500).json({ error: 'Internal Server Error' });
                 }
             } else {
                 return res.status(401).json({ error: 'Invalid credentials' });
