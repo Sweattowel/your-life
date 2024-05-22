@@ -336,7 +336,7 @@ app.post("/api/getComments", async (req, res) => {
 app.post("/api/createComment", (req, res) => {
     try {
         const {picture, postID, userID, userName, comment} = req.body    
-        const CREATECOMMENTSQL = "INSERT INTO COMMENTS (picture, postID, userID, userName, comment) VALUES (?, ?, ?, ?, ?,)"
+        const CREATECOMMENTSQL = "INSERT INTO COMMENTS (picture, postID, userID, userName, comment) VALUES (?, ?, ?, ?, ?)"
 
         db.execute(CREATECOMMENTSQL, [picture, postID, userID, userName, comment], (err, result) => {
             if (err) {
