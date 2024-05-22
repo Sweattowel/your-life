@@ -201,8 +201,8 @@ app.post('/api/Login', async (req, res) => {
                 const verified = await encryptionHandler.decrypt(passWord, result[0].passWord)
                 if (verified){
                     const newToken = await tokenHandler.createToken(result[0].userID, result[0].userName);
-                    console.log('success');
-                    return res.status(200).json({ data: result[0], token: newToken });                    
+                    console.log('success', newToken);
+                    return res.status(200).json({...result[0], token: newToken});                    
                 }
             } else {
                 return res.status(401).json({ error: 'Invalid credentials' });

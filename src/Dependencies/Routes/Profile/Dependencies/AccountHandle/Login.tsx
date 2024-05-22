@@ -51,6 +51,7 @@ export default function Login()
                         setUserID(response.data.data.userID)
                         setUserName(response.data.data.userName)
                         setEmail(response.data.data.userName)
+                        console.log(response)
                         break;
                     case 409:
                         setError("Bad Data")
