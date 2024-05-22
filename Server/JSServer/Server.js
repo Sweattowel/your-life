@@ -210,11 +210,8 @@ app.post('/api/Login', async (req, res) => {
                 if (verified && newToken){
                     console.log('success', newToken);
 
-                    res.cookie('authToken', newToken, {
-                        httpOnly: true, 
-                        maxAge: 3600000,
-                        secure: false
-                    });
+                    res.cookie('authToken', newToken);
+                    
                     return res.status(200).json({...result[0], token: newToken});                    
                 } else {
                     return res.status(500).json({ error: 'Internal Server Error' });
