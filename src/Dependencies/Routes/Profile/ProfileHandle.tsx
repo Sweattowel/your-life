@@ -18,7 +18,7 @@ export default function ProfileHandle()
         setEmail, ] = useMyContext()
 
     return(
-        <section className="ml-[10vw] w-[90vw]">
+        <section>
             {authenticated ? (
                 <ProfileDetails />
             ) : (

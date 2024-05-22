@@ -39,14 +39,6 @@ export default function Create()
 
     const createPost = async () =>
     {
-        function getCookie() {
-            const tokenUser = document.cookie
-            return tokenUser;
-        }
-        
-        const authToken = getCookie();
-        console.log(authToken);
-        return
         if (item.pictureFile === null){
             return
         }
@@ -54,7 +46,6 @@ export default function Create()
         
         formData.append("title", item.title);
         formData.append("message", item.message);
-        // TODO dont forget to convert this back in the back end or account for the string
         formData.append("userID", userID.toString()); 
         formData.append("userName", userName); 
         formData.append("picture", item.pictureFile);

@@ -25,7 +25,7 @@ if (rootElement) {
               <Route path='/Register' Component={Register}/>
               <Route path='/Create' Component={Create}/>
               <Route path='/Contact' Component={Contact}/>
-              <Route path='/posts/user/:userID/postID/:postID/picture/:picture/page/:page' Component={Post} />
+              <Route path='/posts/user/:userID/userName/:userName/postID/:postID/picture/:picture/page/:page' Component={Post} />
             </Routes>
         </Router>
       </ContextProvider>        

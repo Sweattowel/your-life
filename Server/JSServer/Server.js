@@ -211,7 +211,7 @@ app.post('/api/Login', async (req, res) => {
                     console.log('success', newToken);
 
                     res.cookie('authToken', newToken);
-                    
+
                     return res.status(200).json({...result[0], token: newToken});                    
                 } else {
                     return res.status(500).json({ error: 'Internal Server Error' });
@@ -250,9 +250,9 @@ app.post('/api/GetPosts', async (req, res) => {
         console.log('Received GetPost request')
 
         const GETPOSTSSQL = 'SELECT * FROM POSTS'
-        const SPECIFICGETPOSTSQL = 'SELECT * FROM POSTS WHERE userID = ?'
+        const USERPOSTSGETSQL = 'SELECT * FROM POSTS WHERE userID = ?'
 
-        const query = req.body.userID ? SPECIFICGETPOSTSQL : GETPOSTSSQL
+        const query = req.body.userID ? USERPOSTSGETSQL : GETPOSTSSQL
         const credentials = req.body.userID ? req.body.userID : null
 
         db.execute(query, credentials, (err, results) => {
@@ -266,6 +266,61 @@ app.post('/api/GetPosts', async (req, res) => {
 
     } catch (error) {
         console.log('FAILURE IN GET POSTS', error)
+        res.status(500).json({ error: 'Internal Server Error'})
+    }
+})
+app.post("/api/GetSpecificPost", async (req, res) => {
+    try {
+        console.log('Received specific post request')
+        const { postID } = req.body
+        const SPECIFICPOSTSQL = 'SELECT * FROM POSTS WHERE postID = ?'
+        const COMMENTGETSQL = 'SELECT * FROM COMMENTS WHERE postID = ?'
+        
+        const [postResult, commentResult] = await Promise.all([
+            new Promise((resolve, reject) => {
+                db.execute(SPECIFICPOSTSQL, [postID], (err, result) => {
+                    if (err) {
+                        console.log(err)
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+                });
+            }),
+            new Promise((resolve, reject) => {
+                db.execute(COMMENTGETSQL, [postID], (err, result) => {
+                    if (err) {
+                        console.log(err)
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+                });
+            })
+        ]);
+
+        res.status(200).json({ postData: postResult, postComments: commentResult})
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: 'Internal Server Error'})
+    }
+})
+app.post("/api/getComments", async (err, res) => {
+    try {
+        console.log("Received getComments request")
+        const { postID, amount, offSet } = req.body
+        const GETCOMMENTSSQL = "SELECT * FROM COMMENTS WHERE postID = ? LIMIT ? OFFSET ? "
+
+        db.execute(GETCOMMENTSSQL, [ postID, amount, offSet ], (err, results) => {
+            if (err) {
+                console.log(err)
+                res.status(500).json({ error: "Internal Server Error"})
+            } else {
+                res.status(200).json( results )
+            }
+        })
+    } catch (error) {
+        console.log(error)
         res.status(500).json({ error: 'Internal Server Error'})
     }
 })
@@ -291,7 +346,7 @@ app.post('/api/CreatePost', upload.single('picture'), async (req, res) => {
             res.status(401).json({ error: 'Invalid filetype'})
             return
         }   
-        const CREATESQL = 'INSERT INTO POSTS (title, message, Picture, userID, userName, tags) VALUES (?, ?, ?, ?, ?, ?)'
+        const CREATESQL = 'INSERT INTO POSTS (title, message, Picture, userID, userName, tags, likeCount, dislikeCount) VALUES (?, ?, ?, ?, ?, ?, 0, 0)'
         const filePath = path.join('images', file.filename);
         
         db.execute(CREATESQL, [ title, message, filePath, userID, userName, tags ], (err, result) => {

@@ -1,16 +1,19 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import url from 'url'
 
-
+interface commentsStruc {
+    picture: string,
+    userNAME: string,
+    comment: string,
+}
 export default function Post() {
+    const server = `${process.env.REACT_APP_SERVER_ADDRESS}`
     const params = useParams();
     const navigate = useNavigate()
-    const comments = [
-        {picture: "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg", userName: "This project will take a while", comment: "test"},
-        {picture: "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg", userName: "dipsnit", comment: "ehhhh"},
-        {picture: "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg", userName: "dipshit", comment: "GHarbhae"}
-    ];
+    const [comments, setComments ] = useState<commentsStruc[]>([]);
     const commentsPerPage = 2;
     const currentPage = parseInt(params.page as string, 10) || 1;
     const [page, setPage] = useState(currentPage);
@@ -26,27 +29,62 @@ export default function Post() {
         static handlePrevPage = () => {
             const newPage = Math.max(1, page - 1);
             setPage(newPage);
-            navigate(`/posts/user/${params.userID}/postID/${params.postID}/picture/${encodeURIComponent(`${params.picture}`)}/page/${newPage}`);
+            navigate(`/posts/user/${params.userID}/userName/${params.userName}/postID/${params.postID}/picture/${encodeURIComponent(`${params.picture}`)}/page/${newPage}`);
             
         };
 
         static handleNextPage = () => {
             const newPage = Math.min(totalPages, page + 1);
             setPage(newPage);
-            navigate(`/posts/user/${params.userID}/postID/${params.postID}/picture/${encodeURIComponent(`${params.picture}`)}/page/${newPage}`);
+            navigate(`/posts/user/${params.userID}/userName/${params.userName}/postID/${params.postID}/picture/${encodeURIComponent(`${params.picture}`)}/page/${newPage}`);
         };        
     }
+    class handlePost {
+        static getData(ID: string) {
+            try {
+                
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        static async getComments(postIDString: string, wantedOffSet) {
+            try {
+                const postID = parseInt(postIDString)
+                const response = await axios.post(`${server}/api/getComments`, {postID: postID, amount: 10, offSet: wantedOffSet})
+                if (response.status === 200) {
+                    if (comments.length > 0) {
+                        setComments((prevComments) => [
+                            ...prevComments, response.data
+                        ])
+                    } else {
+                        setComments(response.data)
+                    }
+                } else {
+                    setComments([])
+                }
+            } catch (error) {
+                setComments([])
+            }
+        }
+    }
+    useEffect(() => {
+        handlePost.getData(params.postID!)
+        handlePost.getComments(params.postID!, (page - 1) * 10);
 
+    }, [])
+    useEffect(() => {
+        handlePost.getComments(params.postID!, (page - 1) * 10);
 
+    }, [page])
     return (
         <section className="ml-[10vw] w-[89vw] h-full flex flex-col items-center ">
             <div className="bg-HIGHLIGHTA w-[90%] h-[90vh] mt-10 m-auto border">
                 <h2 className="text-BLACK bg-WHITE mt-4 w-[60%] m-auto shadow-lg text-center text-[1.5rem]">
-                    Post {params.postID} by {params.userID}
+                    Post {params.postID} by {params.userName}
                 </h2>
                 <img 
                     className="max-w-[80%] m-auto mt-5 shadow-lg"
-                    src={params.picture} 
+                    src={url.resolve(server, `${params.picture}`) } 
                     alt="post" 
                 />
             </div>
@@ -56,7 +94,7 @@ export default function Post() {
                         <img className="h-full rounded-full" src={comment.picture} alt={comment.comment} />
                         <div className="ml-5">
                             <h5 className="font-bold">
-                                {comment.userName}
+                                {comment.userNAME}
                             </h5>
                             <p>
                                 {comment.comment}
@@ -66,7 +104,7 @@ export default function Post() {
                 ))}
                 <div className="flex justify-between mt-4 p-1">
                     <button className="hover:font-bold hover:cursor-pointer" onClick={handlePagination.handlePrevPage} disabled={page === 1}>Previous</button>
-                    <span>{page} / {totalPages}</span>
+                    <span>{page} / {Math.max(1, totalPages)}</span>
                     <button className="hover:font-bold hover:cursor-pointer" onClick={handlePagination.handleNextPage} disabled={page === totalPages}>Next</button>
                 </div>
             </section>
