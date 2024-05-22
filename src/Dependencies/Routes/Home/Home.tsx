@@ -149,7 +149,7 @@ export default function Home()
                          
                     </section>
                     <div className="divide-y w-full duration-5000 bg-WHITE rounded-b">
-                        {wantCommentID === post.postID && displayComments &&
+                        {wantCommentID === post.postID &&
                             displayComments.map((comment, commentIndex) => (
                                 <div key={commentIndex} className="shadow-inner w-full h-[5rem] flex">
                                     <img className="h-[90%] ml-4 m-auto rounded-full" src={comment.picture} alt={comment.comment} />
