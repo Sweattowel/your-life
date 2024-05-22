@@ -68,14 +68,16 @@ class tokenHandler {
     }
     static checkTokenTime(token){
         try {
-            // MINIMUM IS 300 seconds as 5 minutes
-            const decoded = jwt.decode(token)
-            if (!decoded || !decoded.exp || !this.checkToken(token)) return 0
-            
-            const currentTime = Math.floor(Date.now() / 1000);
-            const remainingTime = decoded.exp - currentTime;
-
-            return remainingTime
+             return new Promise(( resolve, reject ) => {
+                const decoded = jwt.decode(token)
+                if (!decoded || !decoded.exp || !this.checkToken(token)) { 
+                    resolve(0)
+                }
+                const currentTime = Math.floor(Date.now() / 1000);
+                const remainingTime = decoded.exp - currentTime;
+    
+                resolve(remainingTime)
+             })
 
         } catch (error) {
             return 0
@@ -101,17 +103,17 @@ class tokenHandler {
     }
     static async handleRefresh(userID, userName, token) {
         try {
-            // DEFINE AND CHECK IF DATA IS PRESENT IN REQ BODY
             if (!token || !userID || !userName) return token
-            // ALERT USER
             console.log('Received TokenRefresh')
-            // CHECK TOKEN IS VIABLE
+
             const viable = await tokenHandler.checkTokenTime(token)
             if (viable <= 300) {
                 const newToken = await tokenHandler.createToken(userID, userName)
                 return newToken
+            } else {
+                return token
             }
-            return token
+            
         } catch (error) {
             console.log('FAILURE IN TOKEN REFRESH', error)
             return token
