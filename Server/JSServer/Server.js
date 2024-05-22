@@ -409,7 +409,7 @@ app.post('/api/UpdateProfile', uploadProfilePicture.single('picture'), async (re
         const hashedPassWord = await encryptionHandler.encrypt(passWord)
         const profilePicturePath = file ? path.resolve(__dirname, file.filename) : null;
 
-        db.execute(UPDATESQL, [emailAddress, hashedPassWord, profilePicturePath])
+        db.execute(UPDATESQL, [userID, emailAddress, hashedPassWord, profilePicturePath])
         res.status(200).json({ message: 'Successfully updated profile', token: newToken})
     } catch (error) {
         console.log('FAILURE IN UPDATE PROFILE', error)

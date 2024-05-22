@@ -75,11 +75,17 @@ export default function ProfileDetails()
                 <h1 className="text-[1.5rem] text-center bg-HIGHLIGHTA text-WHITE p-5 rounded w-[40%]">
                     Welcome {userName}
                 </h1>
-                <img 
-                    className="rounded-full h-[8rem] shadow-lg" 
-                    src="https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg" 
-                    alt="You" 
-                />
+                <div className="relative group w-[8rem] h-[8rem]">
+                    <img 
+                        className="rounded-full w-full h-full shadow-lg hover:opacity-50" 
+                        src="https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg" 
+                        alt="You" 
+                    />     
+                    <Link to={'/Profile/Update'} className="absolute inset-0 flex items-center justify-center text-white text-lg bg-HIGHLIGHTB bg-opacity-50 opacity-0 group-hover:opacity-100 rounded-full hover:cursor-pointer">
+                        Update profile?
+                    </Link>
+                </div>
+
 
             </div>
             <section className="flex flex-col ml-[10vw] mt-1 w-[80%] justify-center items-center">
