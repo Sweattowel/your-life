@@ -6,6 +6,8 @@ import url from 'url'
 
 interface commentsStruc {
     picture: string,
+    postID: number,
+    userID: number
     userNAME: string,
     comment: string,
 }

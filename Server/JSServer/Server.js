@@ -305,7 +305,7 @@ app.post("/api/GetSpecificPost", async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error'})
     }
 })
-app.post("/api/getComments", async (err, res) => {
+app.post("/api/getComments", async (req, res) => {
     try {
         console.log("Received getComments request")
         const { postID, amount, offSet } = req.body
