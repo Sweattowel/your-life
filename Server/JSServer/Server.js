@@ -75,11 +75,12 @@ class tokenHandler {
                 }
                 const currentTime = Math.floor(Date.now() / 1000);
                 const remainingTime = decoded.exp - currentTime;
-    
+                console.log('Remaining time', remainingTime)
                 resolve(remainingTime)
              })
 
         } catch (error) {
+            console.log(error)
             return 0
         }
     }
@@ -107,13 +108,14 @@ class tokenHandler {
             console.log('Received TokenRefresh')
 
             const viable = await tokenHandler.checkTokenTime(token)
+            console.log(viable)
             if (viable <= 300) {
                 const newToken = await tokenHandler.createToken(userID, userName)
                 return newToken
             } else {
                 return token
             }
-            
+
         } catch (error) {
             console.log('FAILURE IN TOKEN REFRESH', error)
             return token
@@ -224,7 +226,7 @@ app.post('/api/Login', async (req, res) => {
 app.post('/api/TokenRefresh', async (req, res) => {
     try {
         const {userID, userName} = req.body
-
+        console.log('Token refresh call')
         const authHeader = req.headers['authorization'];
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return res.status(401).json({ error: 'Unauthorized: Missing or invalid token' });
