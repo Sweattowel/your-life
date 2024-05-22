@@ -57,17 +57,10 @@ export default function Post() {
         };        
     }
     class handlePost {
-        static getData(ID: string) {
-            try {
-                
-            } catch (error) {
-                console.log(error)
-            }
-        }
         static async getComments(postIDString: string, wantedOffSet: number) {
             try {
                 const postID = parseInt(postIDString)
-                const response = await axios.post(`${server}/api/getComments`, {postID: postID, amount: 10, offSet: wantedOffSet})
+                const response = await axios.post(`${server}/api/getComments`, {postID: postID, amount: 10, offSet: Math.max(0, wantedOffSet)})
                 if (response.status === 200) {
                     if (comments.length > 0) {
                         setComments((prevComments) => [
@@ -97,7 +90,7 @@ export default function Post() {
         }
     }
     useEffect(() => {
-        handlePost.getData(params.postID!)
+        //handlePost.getData(params.postID!)
         handlePost.getComments(params.postID!, (page - 1) * 10);
 
     }, [])

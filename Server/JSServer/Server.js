@@ -318,7 +318,7 @@ app.post("/api/getComments", async (req, res) => {
     try {
         console.log("Received getComments request")
         const { postID, amount, offSet } = req.body
-        const GETCOMMENTSSQL = `SELECT * FROM COMMENTS WHERE postID = ? LIMIT ${amount} OFFSET ${offSet}`
+        const GETCOMMENTSSQL = `SELECT * FROM COMMENTS WHERE postID = ? LIMIT ? OFFSET ?`
 
         db.execute(GETCOMMENTSSQL, [ postID, amount, offSet ], (err, results) => {
             if (err) {
@@ -335,6 +335,7 @@ app.post("/api/getComments", async (req, res) => {
 })
 app.post("/api/createComment", (req, res) => {
     try {
+        console.log("Received create comment request")
         const {picture, postID, userID, userName, comment} = req.body    
         const CREATECOMMENTSQL = "INSERT INTO COMMENTS (picture, postID, userID, userName, comment) VALUES (?, ?, ?, ?, ?)"
 
