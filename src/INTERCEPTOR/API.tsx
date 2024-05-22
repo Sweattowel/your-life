@@ -27,5 +27,7 @@ API.interceptors.request.use((config) => {
 export const createPost = async (formData: any) => {
     return API.post(`/api/createPost`, formData)
 };
-
+export const UpdateProfile = async (formData: any) => {
+    return API.post(`/api/UpdateProfile`, formData,)
+}
 export default API

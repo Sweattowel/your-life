@@ -1,6 +1,7 @@
 import React, {useState} from "react"
 import axios from "axios"
 import { useMyContext } from "../../../../../ContextProvider/ContextProvider.tsx"
+import API from "../../../../../INTERCEPTOR/API.tsx"
 
 interface newDetailsStruc {
     email: string,
@@ -37,7 +38,8 @@ export default function Update() {
             formData.append("email", newDetails.email)
             formData.append("passWord", newDetails.passWord  )
             formData.append("picture", newDetails.pictureFile || "")
-            const response = await axios.post(`${server}/api/UpdateProfile`, formData,)
+            
+            const response = await API.post(`${server}/api/UpdateProfile`, formData,)
             if (response.status === 200) {
                 setError('Successfully updated profile')
                 setNewDetails({
