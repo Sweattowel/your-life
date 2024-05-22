@@ -213,7 +213,6 @@ app.post('/api/Login', async (req, res) => {
                         httpOnly: true, 
                         maxAge: 3600000 
                     });
-                    console.log(res)
                     return res.status(200).json({...result[0], token: newToken});                    
                 } else {
                     return res.status(500).json({ error: 'Internal Server Error' });
