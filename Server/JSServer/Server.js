@@ -41,6 +41,7 @@ app.use(express.urlencoded({ extended: true }))
 // IMAGE DIRECTORY
 
 app.use("/images", express.static(path.join(__dirname, 'images')))
+app.use("/profileImages", express.static(path.join(__dirname, 'profileImages')))
 
 const storage = multer.diskStorage({ 
     destination: (req, file, cb) => {
@@ -50,8 +51,16 @@ const storage = multer.diskStorage({
         cb(null, file.originalname);
     }
 })
-
+const profileImage = multer.diskStorage({ 
+    destination: (req, file, cb) => {
+        cb(null, path.resolve(__dirname, "images"))
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    }
+})
 const upload = multer( { storage: storage })
+const uploadProfilePicture = multer( { storage: profileImage })
 
 // TEMP HOLD
 const REACT_APP_TOKEN_KEY = 'privatekey'
@@ -211,7 +220,7 @@ app.post('/api/Login', async (req, res) => {
                     console.log('success', newToken);
 
                     res.cookie('authToken', newToken);
-                    
+
                     return res.status(200).json({...result[0], token: newToken});                    
                 } else {
                     return res.status(500).json({ error: 'Internal Server Error' });
@@ -324,6 +333,25 @@ app.post("/api/getComments", async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error'})
     }
 })
+app.post("/api/createComment", (req, res) => {
+    try {
+        const {picture, postID, userID, userName, comment} = req.body    
+        const CREATECOMMENTSQL = "INSERT INTO COMMENTS (picture, postID, userID, userName, comment) VALUES (?, ?, ?, ?, ?,)"
+
+        db.execute(CREATECOMMENTSQL, [picture, postID, userID, userName, comment], (err, result) => {
+            if (err) {
+                console.log(err)
+                res.status(500).json({ error: "Internal Server Error"}) 
+            } else {
+                res.status(200).json({ message: 'Successfully made comment'})
+            }
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: 'Internal Server Error'})
+    }
+    
+})
 
 app.post('/api/CreatePost', upload.single('picture'), async (req, res) => {
     try {
@@ -364,7 +392,7 @@ app.post('/api/CreatePost', upload.single('picture'), async (req, res) => {
     }
 })
 
-app.post('/api/UpdateProfile', upload.single('picture'), async (req, res) => {
+app.post('/api/UpdateProfile', uploadProfilePicture.single('picture'), async (req, res) => {
     try {
         console.log("Received update request")
 

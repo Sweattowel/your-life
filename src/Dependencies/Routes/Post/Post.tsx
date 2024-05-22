@@ -86,7 +86,7 @@ export default function Post() {
         static async createComment() {
             try {
                 const picture = ''
-                const response = await axios.post(`${server}/api/getComments`, { picture: picture, postID: params.postID, userID: userID, userName: userName, comment: newComment })
+                const response = await axios.post(`${server}/api/createComment`, { picture: picture, postID: params.postID, userID: userID, userName: userName, comment: newComment })
                 if (response.status === 200) {
                     setNewComment('')
                     handlePost.getComments(params.postID!, (page - 1) * 10);

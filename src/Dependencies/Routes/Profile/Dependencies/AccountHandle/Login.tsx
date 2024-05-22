@@ -50,8 +50,7 @@ export default function Login()
                         setUserID(response.data.userID)
                         setUserName(response.data.userName)
                         setEmail(response.data.userName)
-                        console.log(response.data.token)
-                        console.log('Cookie ', document.cookie)
+                        sessionStorage.setItem("profilePicture", response.data.picture)
                         break;
                     case 409:
                         setError("Bad Data")

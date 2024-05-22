@@ -70,7 +70,7 @@ export default function ProfileDetails()
     },[])
     
     return(
-        <section className="flex flex-col bg-gradient-to-r from-HIGHLIGHTB to-HIGHLIGHTA w-full h-full">
+        <section className="flex flex-col bg-gradient-to-r from-HIGHLIGHTB to-HIGHLIGHTA w-full h-full shadow-lg">
             <div className="ml-[10vw] bg-WHITE h-[12vh] flex justify-evenly items-center">
                 <h1 className="text-[1.5rem] text-center bg-HIGHLIGHTA text-WHITE p-5 rounded w-[40%]">
                     Welcome {userName}
@@ -99,7 +99,9 @@ export default function ProfileDetails()
                     ))}                     
                
             </section>
-
+            <footer className="bg-WHITE text-BLACK w-full">
+                test
+            </footer>
         </section>
     )
 }
