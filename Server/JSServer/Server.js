@@ -317,8 +317,8 @@ app.post("/api/GetSpecificPost", async (req, res) => {
 app.post("/api/getComments", async (req, res) => {
     try {
         console.log("Received getComments request")
-        const { postID, amount, offSet } = req.body
-        const GETCOMMENTSSQL = `SELECT * FROM COMMENTS WHERE postID = ? LIMIT ${amount} OFFSET ${offSet}`
+        const { postID } = req.body
+        const GETCOMMENTSSQL = `SELECT * FROM COMMENTS WHERE postID = ?`
 
         db.execute(GETCOMMENTSSQL, [ postID ], (err, results) => {
             if (err) {

@@ -9,7 +9,7 @@ interface commentsStruc {
     picture: string,
     postID: number,
     userID: number
-    userNAME: string,
+    userName: string,
     comment: string,
 }
 export default function Post() {
@@ -29,7 +29,7 @@ export default function Post() {
     const params = useParams();
     const navigate = useNavigate()
     const [comments, setComments ] = useState<commentsStruc[]>([]);
-    const commentsPerPage = 2;
+    const commentsPerPage = 10;
     const currentPage = parseInt(params.page as string, 10) || 1;
     const [newComment, setNewComment] = useState("")
      
@@ -62,13 +62,7 @@ export default function Post() {
                 const postID = parseInt(postIDString)
                 const response = await axios.post(`${server}/api/getComments`, {postID: postID, amount: 10, offSet: Math.max(0, wantedOffSet)})
                 if (response.status === 200) {
-                    if (comments.length > 0) {
-                        setComments((prevComments) => [
-                            ...prevComments, response.data
-                        ])
-                    } else {
-                        setComments(response.data)
-                    }
+                    setComments(response.data)
                 } else {
                     setComments([])
                 }
@@ -78,7 +72,7 @@ export default function Post() {
         }
         static async createComment() {
             try {
-                const picture = ''
+                const picture = localStorage.getItem("profilePicture")
                 const response = await axios.post(`${server}/api/createComment`, { picture: picture, postID: params.postID, userID: userID, userName: userName, comment: newComment })
                 if (response.status === 200) {
                     setNewComment('')
@@ -91,11 +85,11 @@ export default function Post() {
     }
     useEffect(() => {
         //handlePost.getData(params.postID!)
-        handlePost.getComments(params.postID!, (page - 1) * 10);
+        handlePost.getComments(params.postID!, (page) * 10);
 
     }, [])
     useEffect(() => {
-        handlePost.getComments(params.postID!, (page - 1) * 10);
+        handlePost.getComments(params.postID!, (page) * 10);
 
     }, [page])
     return (
@@ -110,13 +104,13 @@ export default function Post() {
                     alt="post" 
                 />
             </div>
-            <section className="divide-y w-[90%] shadow-lg">
+            <section className="divide-y w-[90%] shadow-lg flex flex-col">
                 {displayComments.map((comment, index) => (
                     <div key={index} className="h-[6rem] flex w-full">
-                        <img className="h-full rounded-full" src={comment.picture} alt={comment.comment} />
+                        <img className="h-full rounded-full w-[6rem] bg-HIGHLIGHTA" src={comment.picture} />
                         <div className="ml-5">
                             <h5 className="font-bold">
-                                {comment.userNAME}
+                                {comment.userName}
                             </h5>
                             <p>
                                 {comment.comment}
