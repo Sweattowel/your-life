@@ -318,9 +318,9 @@ app.post("/api/getComments", async (req, res) => {
     try {
         console.log("Received getComments request")
         const { postID, amount, offSet } = req.body
-        const GETCOMMENTSSQL = `SELECT * FROM COMMENTS WHERE postID = ? LIMIT ? OFFSET ?`
+        const GETCOMMENTSSQL = `SELECT * FROM COMMENTS WHERE postID = ? LIMIT ${amount} OFFSET ${offSet}`
 
-        db.execute(GETCOMMENTSSQL, [ postID, amount, offSet ], (err, results) => {
+        db.execute(GETCOMMENTSSQL, [ postID ], (err, results) => {
             if (err) {
                 console.log(err)
                 res.status(500).json({ error: "Internal Server Error"})
