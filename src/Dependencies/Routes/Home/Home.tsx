@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useMyContext } from "../../../ContextProvider/ContextProvider.tsx";
+import url from "url";
 
 const placeHolderPosts = [
     {
@@ -36,7 +37,7 @@ const placeHolderPosts = [
 ]
 export default function Home()
 {
-    const server = process.env.REACT_APP_SERVER_ADDRESS
+    const server = `${process.env.REACT_APP_SERVER_ADDRESS}`
     const [            
         authenticated,
         setAuthenticated,
@@ -61,9 +62,8 @@ export default function Home()
 
                 switch (response.status) {
                     case 200:
-                        
-                    console.log(response.data)
-                    setPosts(response.data)
+                        console.log(response.data)
+                        setPosts(response.data)
                         sessionStorage.setItem("posts", JSON.stringify(response.data))
                         break;
                     case 404:
@@ -112,7 +112,11 @@ export default function Home()
                         {post.message}
                     </p>
                     
-                    <img className="h-[40vh]" src={post.picture} alt={post.title} />
+                    <img 
+                        className="h-[40vh]" 
+                        src={url.resolve(server, post.picture)} 
+                        alt={post.title} 
+                    />
                     <section className="flex justify-evenly w-[40%] bg-WHITE rounded m-1">
                         <button 
                             onClick={() => setWantCommentID( wantCommentID !== post.postID ? post.postID : -1)}
@@ -158,7 +162,7 @@ export default function Home()
 
                             ))
                         } 
-                        {post.comments.length === 3 && (
+                        {post.comments && post.comments.length === 3 && (
                         <div className="shadow-inner w-full h-[2rem] flex justify-center items-center">
                             More on post                                          
                         </div>

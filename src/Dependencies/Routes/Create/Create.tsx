@@ -50,6 +50,7 @@ export default function Create()
         formData.append("userID", userID.toString()); 
         formData.append("userName", userName); 
         formData.append("picture", item.pictureFile);
+        formData.append("tags", 'Test,Tag,Test');
 
         const response = await API.post(`${server}/api/createPost`, formData)
         

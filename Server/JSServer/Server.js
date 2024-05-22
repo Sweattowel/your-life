@@ -294,7 +294,7 @@ app.post('/api/CreatePost', upload.single('picture'), async (req, res) => {
             return
         }   
         const CREATESQL = 'INSERT INTO POSTS (title, message, Picture, userID, userName, tags) VALUES (?, ?, ?, ?, ?, ?)'
-        const filePath = path.resolve(__dirname, file.filename);
+        const filePath = path.join('images', file.filename);
         
         db.execute(CREATESQL, [ title, message, filePath, userID, userName, tags ], (err, result) => {
             if (err) {
