@@ -6,8 +6,8 @@ const API = axios.create({
 
 function fetchToken(){
 
-    const tokenUser = document.cookie.split(';').find(c => c.trim().startsWith(`token=`))
-    const tokenAdmin = document.cookie.split(';').find(c => c.trim().startsWith(`sutoken=`))
+    const tokenUser = document.cookie.split(';').find(c => c.trim().startsWith(`authToken=`))
+    const tokenAdmin = document.cookie.split(';').find(c => c.trim().startsWith(`superToken=`))
     
     return tokenAdmin !== "" ? tokenAdmin : tokenUser
 }

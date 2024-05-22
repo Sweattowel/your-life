@@ -203,12 +203,17 @@ app.post('/api/Login', async (req, res) => {
                 console.log(err);
                 return res.status(500).json({ error: 'Internal Server Error' });
             }
-            console.log(result)
             if (result.length === 1) {
                 const verified = await encryptionHandler.decrypt(passWord, result[0].passWord)
                 const newToken = await tokenHandler.createToken(result[0].userID, result[0].userName);
                 if (verified && newToken){
                     console.log('success', newToken);
+
+                    res.cookie('authToken', newToken, {
+                        httpOnly: true, 
+                        maxAge: 3600000 
+                    });
+                    console.log(res)
                     return res.status(200).json({...result[0], token: newToken});                    
                 } else {
                     return res.status(500).json({ error: 'Internal Server Error' });
