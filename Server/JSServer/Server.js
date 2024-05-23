@@ -19,10 +19,11 @@ import bcrypt from 'bcrypt';
 // URL ACCESS LIMITATION
 
 const corsOptions = {
-    origin: "*", // Update this to the specific domain for production
+    origin: "http://localhost:3000",
     optionsSuccessStatus: 200,
     credentials: true // Allows cookies to be sent
 };
+
 app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(bodyParser.json());
