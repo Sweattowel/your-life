@@ -19,12 +19,15 @@ import bcrypt from 'bcrypt';
 // URL ACCESS LIMITATION
 
 const corsOptions = {
-    origin: "*",
+    origin: "*", // Update this to the specific domain for production
     optionsSuccessStatus: 200,
-    credentials: true
+    credentials: true // Allows cookies to be sent
 };
 app.use(cors(corsOptions));
-app.use(cookieParser)
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 // DB DEFINITION
 
 const db = mysql.createConnection({
@@ -34,9 +37,6 @@ const db = mysql.createConnection({
     password: process.env.REACT_APP_DATABASE_PASSWORD,
     database: process.env.REACT_APP_DATABASE_DATABASE,
 });
-
-app.use(bodyParser.json())
-app.use(express.urlencoded({ extended: true }))
 
 // IMAGE DIRECTORY
 
