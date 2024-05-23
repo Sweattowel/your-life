@@ -219,7 +219,7 @@ app.post('/api/Login', async (req, res) => {
                 if (verified && newToken){
                     console.log('success', newToken);
 
-                    res.cookie('authToken', newToken);
+                    c
 
                     return res.status(200).json({...result[0], token: newToken});                    
                 } else {
@@ -405,8 +405,9 @@ app.post('/api/UpdateProfile', uploadProfilePicture.single('picture'), async (re
         const file = req.file
 
         const token = req.headers['authorization'] ? req.headers['authorization'].split(' ')[1] : '';
+        console.log(token)
         if (!token ||!tokenHandler.checkToken(token)){
-            res.status(401).json({ error: 'Unauthorized'})
+            return res.status(401).json({ error: 'Unauthorized'})
         } 
         
         const newToken = await tokenHandler.handleRefresh(userID, userName, token)
@@ -418,10 +419,11 @@ app.post('/api/UpdateProfile', uploadProfilePicture.single('picture'), async (re
         db.execute(UPDATESQL, [emailAddress, hashedPassWord, profilePicturePath, userID], (err, results) => {
             if (err) {
                 console.error('Error updating profile:', err);
-                res.status(500).json({ error: 'Internal Server Error' });
+                return res.status(500).json({ error: 'Internal Server Error' });
             } else {
-                res.status(200).json({ message: 'Successfully updated profile', token: newToken });
+                res.cookie('authToken', newToken);
 
+                return res.status(200).json({ message: 'Successfully updated profile'});
             }
         });
 
