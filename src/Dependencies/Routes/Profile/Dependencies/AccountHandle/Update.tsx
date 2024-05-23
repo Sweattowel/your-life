@@ -22,7 +22,7 @@ export default function Update() {
         e.preventDefault();         
         try {
             const formData = new FormData();
-            formData.append("userID", userID);
+            formData.append("userID", userID.toString());
             formData.append("userName", userName);
             formData.append("emailAddress", newDetails.email);
             formData.append("passWord", newDetails.passWord);

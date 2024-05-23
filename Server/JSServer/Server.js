@@ -197,6 +197,7 @@ app.post('/api/Login', async (req, res) => {
     try {
         const { userName, emailAddress, passWord } = req.body;
         if ((!userName && !emailAddress) || !passWord) {
+            console.log('Improper request payload')
             return res.status(422).json({ error: 'Bad request: Unprocessable Entity' });
         }
         
@@ -218,13 +219,13 @@ app.post('/api/Login', async (req, res) => {
                 const newToken = await tokenHandler.createToken(result[0].userID, result[0].userName);
                 if (verified && newToken){
                     console.log('success', newToken);
-
+                    /*
                     res.cookie('authToken', newToken, {
                         httpOnly: true,
                         secure: true,
                         sameSite: 'Strict'
                     });
-
+                    */
                     return res.status(200).json({...result[0], token: newToken});                    
                 } else {
                     return res.status(500).json({ error: 'Internal Server Error' });
@@ -426,12 +427,13 @@ app.post('/api/UpdateProfile', uploadProfilePicture.single('picture'), async (re
                 console.error('Error updating profile:', err);
                 return res.status(500).json({ error: 'Internal Server Error' });
             } else {
+                /*
                 res.cookie('authToken', newToken, {
                     httpOnly: true,
                     secure: true,
                     sameSite: 'Strict'
                 });
-                
+                */
                 return res.status(200).json({ message: 'Successfully updated profile' });
             }
         });
