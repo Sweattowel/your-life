@@ -410,16 +410,16 @@ app.post('/api/UpdateProfile', uploadProfilePicture.single('picture'), async (re
         const { userID, userName, passWord, emailAddress } = req.body;
         const file = req.file;
 
-        const token = req.headers['authorization'] ? req.headers['authorization'].split(' ')[1] : '';
-        console.log('Token:', token);
+        let cookie = req.cookies['authToken'];
+        console.log('Token:', cookie);
 
-        if (!token || !tokenHandler.checkToken(token)) {
+        if (!cookie || !tokenHandler.checkToken(cookie)) {
             return res.status(401).json({ error: 'Unauthorized' });
         }
 
-        const newToken = await tokenHandler.handleRefresh(userID, userName, token);
+        const newToken = await tokenHandler.handleRefresh(userID, userName, cookie);
 
-        const UPDATESQL = "UPDATE USERS SET emailAddress = ?, passWord = ?, profilePicture = ? WHERE userID = ?";
+        const UPDATESQL = "UPDATE USERS SET emailAddress = ?, passWord = ?, picture = ? WHERE userID = ?";
         const hashedPassWord = await encryptionHandler.encrypt(passWord);
         const profilePicturePath = file ? path.join('profileImages', file.filename) : null;
 
