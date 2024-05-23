@@ -399,21 +399,22 @@ app.post('/api/CreatePost', upload.single('picture'), async (req, res) => {
 // UPDATE PROFILE
 app.post('/api/UpdateProfile', uploadProfilePicture.single('picture'), async (req, res) => {
     try {
-        console.log("Received update request")
+        console.log("Received update request");
 
-        const { userID, userName, passWord, emailAddress } = req.body
-        const file = req.file
+        const { userID, userName, passWord, emailAddress } = req.body;
+        const file = req.file;
 
         const token = req.headers['authorization'] ? req.headers['authorization'].split(' ')[1] : '';
-        console.log(token)
-        if (!token ||!tokenHandler.checkToken(token)){
-            return res.status(401).json({ error: 'Unauthorized'})
-        } 
-        
-        const newToken = await tokenHandler.handleRefresh(userID, userName, token)
-        
-        const UPDATESQL = "UPDATE USERS SET emailAddress = ?, passWord = ?, picture = ? WHERE userID = ?";
-        const hashedPassWord = await encryptionHandler.encrypt(passWord)
+        console.log('Token:', token);
+
+        if (!token || !tokenHandler.checkToken(token)) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        const newToken = await tokenHandler.handleRefresh(userID, userName, token);
+
+        const UPDATESQL = "UPDATE USERS SET emailAddress = ?, passWord = ?, profilePicture = ? WHERE userID = ?";
+        const hashedPassWord = await encryptionHandler.encrypt(passWord);
         const profilePicturePath = file ? path.join('profileImages', file.filename) : null;
 
         db.execute(UPDATESQL, [emailAddress, hashedPassWord, profilePicturePath, userID], (err, results) => {
@@ -422,16 +423,15 @@ app.post('/api/UpdateProfile', uploadProfilePicture.single('picture'), async (re
                 return res.status(500).json({ error: 'Internal Server Error' });
             } else {
                 res.cookie('authToken', newToken);
-
-                return res.status(200).json({ message: 'Successfully updated profile'});
+                return res.status(200).json({ message: 'Successfully updated profile' });
             }
         });
 
     } catch (error) {
-        console.log('FAILURE IN UPDATE PROFILE', error)
-        res.status(500).json({ error: 'Internal Server Error'})
+        console.log('FAILURE IN UPDATE PROFILE', error);
+        return res.status(500).json({ error: 'Internal Server Error' });
     }
-})
+});
 // BEGIN TO LISTEN FOR REQUESTS
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`)
