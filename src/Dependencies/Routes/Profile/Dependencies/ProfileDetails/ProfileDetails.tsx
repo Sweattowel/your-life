@@ -34,6 +34,8 @@ export default function ProfileDetails()
         email,
         setEmail, ] = useMyContext()
         
+    const [userPicture, setUserPicture] = useState("")
+
     class handlePosts
     {
         static async getPosts() {
@@ -68,7 +70,13 @@ export default function ProfileDetails()
     useEffect(() => {
         handlePosts.getPosts();
     },[])
-    
+    useEffect(() => {
+        if (authenticated) {
+            const newPicture = sessionStorage.getItem('profilePicture')
+            setUserPicture(`${newPicture}`)
+            console.log(`${newPicture}`)
+        }
+    }, [authenticated])
     return(
         <section className="flex flex-col bg-gradient-to-r from-HIGHLIGHTB to-HIGHLIGHTA w-full h-full shadow-lg">
             <div className="ml-[10vw] bg-WHITE h-[12vh] flex justify-evenly items-center">
@@ -78,7 +86,7 @@ export default function ProfileDetails()
                 <div className="relative group w-[8rem] h-[8rem]">
                     <img 
                         className="rounded-full w-full h-full shadow-lg hover:opacity-50" 
-                        src="https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg" 
+                        src={url.resolve(`${server}`, userPicture)} 
                         alt="You" 
                     />     
                     <Link to={'/Profile/Update'} className="absolute inset-0 flex items-center justify-center text-white text-lg bg-HIGHLIGHTB bg-opacity-50 opacity-0 group-hover:opacity-100 rounded-full hover:cursor-pointer">
@@ -100,7 +108,7 @@ export default function ProfileDetails()
                                     Open Post
                                 </Link>                            
                             </div>
-                                <img className="max-w-[30vw] h-[25vh]" src={url.resolve(server, post.picture)} alt={post.title} />
+                                <img className="max-w-[30vw] h-[25vh]" src={url.resolve(`${server}`, post.picture)} alt={post.title} />
                         </div>
                     ))}                     
                
