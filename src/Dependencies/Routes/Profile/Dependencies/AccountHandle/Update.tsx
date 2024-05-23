@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useMyContext } from "../../../../../ContextProvider/ContextProvider.tsx";
 import API from "../../../../../INTERCEPTOR/API.tsx";
+import url from "url";
 
 interface NewDetailsStruc {
     email: string;
@@ -10,7 +11,7 @@ interface NewDetailsStruc {
 
 export default function Update() {
     const [authenticated, setAuthenticated, admin, setAdmin, userID, setUserID, userName, setUserName, email, setEmail] = useMyContext();
-
+    const server = process.env.REACT_APP_SERVER_ADDRESS
     const [error, setError] = useState("");
     const [newDetails, setNewDetails] = useState<NewDetailsStruc>({
         email: "",
@@ -62,13 +63,20 @@ export default function Update() {
 
     return (
         <section className="w-full h-[100vh] bg-HIGHLIGHTB">
+
             <h1 className="ml-[10vw] bg-HIGHLIGHTA w-[90vw] text-WHITE text-center text-[3rem] shadow-lg">
                 Update Profile
             </h1>
+           
             <form onSubmit={updateDetails} className="flex flex-col bg-WHITE shadow-LG w-[60%] h-[50vh] m-auto justify-evenly items-center">
+                <img 
+                    className="rounded-full h-[10rem]"
+                    src={url.resolve(`${server}`, `${sessionStorage.getItem("profilePicture")}`)} 
+                    alt="You" 
+                />                 
                 <h2>New Password</h2>
                 <input
-                    className="w-[50%] flex"
+                    className="w-[50%] h-[2rem] flex bg-HIGHLIGHTA text-WHITE text-center rounded shadow-lg"
                     type="text"
                     name="passWord"
                     value={newDetails.passWord}
@@ -77,7 +85,7 @@ export default function Update() {
                 />
                 <h2>New Email Address</h2>
                 <input
-                    className="w-[50%] flex"
+                    className="w-[50%] h-[2rem] flex bg-HIGHLIGHTA text-WHITE text-center rounded shadow-lg"
                     type="text"
                     name="email"
                     value={newDetails.email}
@@ -91,7 +99,12 @@ export default function Update() {
                     type="file"
                     id="newpostimage"
                 />
-                <button type="submit">Submit new details</button>
+                <button 
+                    className="bg-HIGHLIGHTB p-4 rounded shadow-lg text-WHITE hover:cursor-pointer hover:scale-[1.10]"
+                    type="submit"
+                >
+                    Submit new details
+                </button>
                 <p>{error}</p>
             </form>
         </section>

@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import url from 'url'
 import { useMyContext } from "../../../ContextProvider/ContextProvider.tsx";
 
@@ -11,6 +11,12 @@ interface commentsStruc {
     userID: number
     userName: string,
     comment: string,
+}
+interface dataStruc {
+    likeCount: number,
+    dislikeCount: number,
+    message: string
+    title: string
 }
 export default function Post() {
     const server = `${process.env.REACT_APP_SERVER_ADDRESS}`
@@ -28,6 +34,13 @@ export default function Post() {
 
     const params = useParams();
     const navigate = useNavigate()
+    
+    const [data, setData] = useState<dataStruc>({
+        likeCount: 0,
+        dislikeCount: 0,
+        message: "",
+        title: ""
+    })
     const [comments, setComments ] = useState<commentsStruc[]>([]);
     const commentsPerPage = 10;
     const currentPage = parseInt(params.page as string, 10) || 1;
@@ -55,14 +68,31 @@ export default function Post() {
             setPage(newPage);
             navigate(`/posts/user/${params.userID}/userName/${params.userName}/postID/${params.postID}/picture/${encodeURIComponent(`${params.picture}`)}/page/${newPage}`);
         };        
+        static handleMaxPage = () => {
+            const newPage = totalPages;
+            setPage(newPage);
+            navigate(`/posts/user/${params.userID}/userName/${params.userName}/postID/${params.postID}/picture/${encodeURIComponent(`${params.picture}`)}/page/${newPage}`);
+        };        
     }
     class handlePost {
+        static async getData() {
+            try {
+                const response = await axios.post(`${server}/api/GetSpecificPost`, {postID: params.postID})
+
+                if (response.status === 200) {
+                    setData(response.data)
+                }
+            } catch (error) {
+                
+            }
+        }
         static async getComments(postIDString: string, wantedOffSet: number) {
             try {
                 const postID = parseInt(postIDString)
                 const response = await axios.post(`${server}/api/getComments`, {postID: postID, amount: 10, offSet: Math.max(0, wantedOffSet)})
                 if (response.status === 200) {
                     setComments(response.data)
+                    console.log(response.data)
                 } else {
                     setComments([])
                 }
@@ -72,11 +102,12 @@ export default function Post() {
         }
         static async createComment() {
             try {
-                const picture = localStorage.getItem("profilePicture")
+                const picture = sessionStorage.getItem("profilePicture")
                 const response = await axios.post(`${server}/api/createComment`, { picture: picture, postID: params.postID, userID: userID, userName: userName, comment: newComment })
                 if (response.status === 200) {
                     setNewComment('')
                     handlePost.getComments(params.postID!, (page - 1) * 10);
+                    handlePagination.handleMaxPage()
                 }
             } catch (error) {
                 console.log(error)
@@ -93,26 +124,33 @@ export default function Post() {
 
     }, [page])
     return (
-        <section className="ml-[10vw] w-[89vw] h-full flex flex-col items-center ">
-            <div className="bg-HIGHLIGHTA w-[90%] h-full pb-2 mt-10 m-auto border">
+        <section className="w-full h-full flex flex-col items-center bg-HIGHLIGHTB">
+            <div className=" w-[90%] h-full pb-2 mt-10 m-auto bg-WHITE shadow-lg">
                 <h2 className="text-BLACK bg-WHITE mt-4 w-[60%] m-auto shadow-lg text-center text-[1.5rem]">
-                    Post {params.postID} by {params.userName}
+                    {data.title}
                 </h2>
+                <p className="text-center min-h-[10rem] border rounded-lg">
+                    { data.message || "Failed to acquire" }
+                </p>
                 <img 
-                    className="max-w-[80%] m-auto mt-5 shadow-lg"
+                    className="w-full m-auto mt-5 shadow-lg"
                     src={url.resolve(server, `${params.picture}`) } 
                     alt="post" 
                 />
+                <Link className="text-HIGHLIGHTB hover:border-b" to={'/t esting'}>by {params.userName}</Link>
             </div>
-            <section className="divide-y w-[90%] shadow-lg flex flex-col">
+            <section className="w-[90%] shadow-lg flex flex-col bg-WHITE">
                 {displayComments.map((comment, index) => (
-                    <div key={index} className="h-[6rem] flex w-full">
-                        <img className="h-full rounded-full w-[6rem] bg-HIGHLIGHTA" src={comment.picture} />
-                        <div className="ml-5">
-                            <h5 className="font-bold">
+                    <div key={index} className="h-[6rem] flex w-[70%] p-2 ml-[10%] shadow-lg">
+                        <img 
+                            className="h-full rounded-full w-[6rem] bg-HIGHLIGHTA" 
+                            src={url.resolve(server, `${comment.picture}`)} 
+                        />
+                        <div className="h-[80%] m-auto l ml-5 bg-WHITE min-w-[20%] rounded-lg">
+                            <h5 className="font-bold ml-[10%]">
                                 {comment.userName}
                             </h5>
-                            <p>
+                            <p className="ml-[10%]">
                                 {comment.comment}
                             </p>                                
                         </div>

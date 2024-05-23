@@ -284,32 +284,16 @@ app.post("/api/GetSpecificPost", async (req, res) => {
         console.log('Received specific post request')
         const { postID } = req.body
         const SPECIFICPOSTSQL = 'SELECT * FROM POSTS WHERE postID = ?'
-        const COMMENTGETSQL = 'SELECT * FROM COMMENTS WHERE postID = ?'
         
-        const [postResult, commentResult] = await Promise.all([
-            new Promise((resolve, reject) => {
-                db.execute(SPECIFICPOSTSQL, [postID], (err, result) => {
-                    if (err) {
-                        console.log(err)
-                        reject(err);
-                    } else {
-                        resolve(result);
-                    }
-                });
-            }),
-            new Promise((resolve, reject) => {
-                db.execute(COMMENTGETSQL, [postID], (err, result) => {
-                    if (err) {
-                        console.log(err)
-                        reject(err);
-                    } else {
-                        resolve(result);
-                    }
-                });
-            })
-        ]);
+        db.execute(SPECIFICPOSTSQL, [postID], (err, results) => {
+            if (err) {
+                res.status(500).json({ error: 'Failed to collect data'})
+            } else {
+                res.status(200).json({ results })
+            }
+        })
 
-        res.status(200).json({ postData: postResult, postComments: commentResult})
+        
     } catch (error) {
         console.log(error)
         res.status(500).json({ error: 'Internal Server Error'})
