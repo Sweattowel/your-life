@@ -222,8 +222,8 @@ app.post('/api/Login', async (req, res) => {
                     console.log('success', newToken);
                     
                     res.cookie('authToken', newToken, {
-                        httpOnly: true,
-                        secure: true,
+                        httpOnly: false,
+                        secure: false,
                         sameSite: 'Strict'
                     });
                     
@@ -430,8 +430,8 @@ app.post('/api/UpdateProfile', uploadProfilePicture.single('picture'), async (re
             } else {
                 
                 res.cookie('authToken', newToken, {
-                    httpOnly: true,
-                    secure: true,
+                    httpOnly: false,
+                    secure: false,
                     sameSite: 'Strict'
                 });
                 
