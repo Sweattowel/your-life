@@ -413,14 +413,16 @@ app.post('/api/UpdateProfile', uploadProfilePicture.single('picture'), async (re
         
         const UPDATESQL = "UPDATE USERS SET emailAddress = ?, passWord = ?, profilePicture = ? WHERE userID = ?";
         const hashedPassWord = await encryptionHandler.encrypt(passWord)
-        const profilePicturePath = file ? path.resolve(__dirname, file.filename) : null;
+        const profilePicturePath = file ? path.join('profileImages', file.filename) : null;
 
         db.execute(UPDATESQL, [emailAddress, hashedPassWord, profilePicturePath, userID], (err, results) => {
             if (err) {
                 console.error('Error updating profile:', err);
                 return res.status(500).json({ error: 'Internal Server Error' });
+            } else {
+                res.status(200).json({ message: 'Successfully updated profile', token: newToken });
+
             }
-            res.status(200).json({ message: 'Successfully updated profile', token: newToken });
         });
 
     } catch (error) {

@@ -35,7 +35,7 @@ export default function Update() {
             
             formData.append("userID", userID)
             formData.append("userName", userName)
-            formData.append("email", newDetails.email)
+            formData.append("emailAddress", newDetails.email)
             formData.append("passWord", newDetails.passWord  )
             formData.append("picture", newDetails.pictureFile || "")
             
