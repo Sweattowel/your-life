@@ -6,7 +6,7 @@ import multer from 'multer';
 import path, { dirname } from 'path';
 import { fileURLToPath } from "url";
 import jwt from 'jsonwebtoken';
-
+import cookieParser from 'cookie-parser'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -24,7 +24,7 @@ const corsOptions = {
     credentials: true
 };
 app.use(cors(corsOptions));
-
+app.use(cookieParser)
 // DB DEFINITION
 
 const db = mysql.createConnection({
@@ -219,7 +219,11 @@ app.post('/api/Login', async (req, res) => {
                 if (verified && newToken){
                     console.log('success', newToken);
 
-                    res.cookie('authToken', newToken);
+                    res.cookie('authToken', newToken, {
+                        httpOnly: true,
+                        secure: true,
+                        sameSite: 'Strict'
+                    });
 
                     return res.status(200).json({...result[0], token: newToken});                    
                 } else {
@@ -422,7 +426,12 @@ app.post('/api/UpdateProfile', uploadProfilePicture.single('picture'), async (re
                 console.error('Error updating profile:', err);
                 return res.status(500).json({ error: 'Internal Server Error' });
             } else {
-                res.cookie('authToken', newToken);
+                res.cookie('authToken', newToken, {
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: 'Strict'
+                });
+                
                 return res.status(200).json({ message: 'Successfully updated profile' });
             }
         });

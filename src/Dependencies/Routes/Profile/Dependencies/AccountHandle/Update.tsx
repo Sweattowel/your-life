@@ -19,7 +19,7 @@ export default function Update() {
     });
 
     async function updateDetails(e) {
-        e.preventDefault();  // Prevent form from submitting the default way
+        e.preventDefault();         
         try {
             const formData = new FormData();
             formData.append("userID", userID);
@@ -28,7 +28,7 @@ export default function Update() {
             formData.append("passWord", newDetails.passWord);
             formData.append("picture", newDetails.pictureFile || "");
 
-            const response = await API.post(`/api/UpdateProfile`, formData);
+            const response = await API.post(`/api/UpdateProfile`, formData, { withCredentials: true });
             if (response.status === 200) {
                 setError('Successfully updated profile');
                 setNewDetails({
