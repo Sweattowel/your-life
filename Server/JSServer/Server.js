@@ -418,7 +418,7 @@ app.post('/api/UpdateProfile', uploadProfilePicture.single('picture'), async (re
         db.execute(UPDATESQL, [emailAddress, hashedPassWord, profilePicturePath, userID], (err, results) => {
             if (err) {
                 console.error('Error updating profile:', err);
-                return res.status(500).json({ error: 'Internal Server Error' });
+                res.status(500).json({ error: 'Internal Server Error' });
             } else {
                 res.status(200).json({ message: 'Successfully updated profile', token: newToken });
 
