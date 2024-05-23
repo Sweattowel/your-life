@@ -220,13 +220,6 @@ app.post('/api/Login', async (req, res) => {
                 const newToken = await tokenHandler.createToken(result[0].userID, result[0].userName);
                 if (verified && newToken){
                     console.log('success', newToken);
-                    
-                    res.cookie('authToken', newToken, {
-                        httpOnly: false,
-                        secure: false,
-                        sameSite: 'Strict'
-                    });
-                    
                     return res.status(200).json({...result[0], token: newToken});                    
                 } else {
                     return res.status(500).json({ error: 'Internal Server Error' });
@@ -410,10 +403,10 @@ app.post('/api/UpdateProfile', uploadProfilePicture.single('picture'), async (re
         const { userID, userName, passWord, emailAddress } = req.body;
         const file = req.file;
 
-        let cookie = req.cookies['authToken'];
-        console.log('Token:', cookie);
+        let token = req.headers['authorization'];
+        console.log('Token:', token);
 
-        if (!cookie || !tokenHandler.checkToken(cookie)) {
+        if (!token || !tokenHandler.checkToken(token)) {
             return res.status(401).json({ error: 'Unauthorized' });
         }
 
@@ -428,13 +421,6 @@ app.post('/api/UpdateProfile', uploadProfilePicture.single('picture'), async (re
                 console.error('Error updating profile:', err);
                 return res.status(500).json({ error: 'Internal Server Error' });
             } else {
-                
-                res.cookie('authToken', newToken, {
-                    httpOnly: false,
-                    secure: false,
-                    sameSite: 'Strict'
-                });
-                
                 return res.status(200).json({ message: 'Successfully updated profile' });
             }
         });
