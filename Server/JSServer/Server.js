@@ -411,7 +411,7 @@ app.post('/api/UpdateProfile', uploadProfilePicture.single('picture'), async (re
         
         const newToken = await tokenHandler.handleRefresh(userID, userName, token)
         
-        const UPDATESQL = "UPDATE USERS SET emailAddress = ?, passWord = ?, profilePicture = ? WHERE userID = ?";
+        const UPDATESQL = "UPDATE USERS SET emailAddress = ?, passWord = ?, picture = ? WHERE userID = ?";
         const hashedPassWord = await encryptionHandler.encrypt(passWord)
         const profilePicturePath = file ? path.join('profileImages', file.filename) : null;
 
