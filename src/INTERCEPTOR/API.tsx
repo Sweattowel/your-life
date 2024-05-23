@@ -5,11 +5,13 @@ const API = axios.create({
 })
 
 function fetchToken(){
+    const tokenUser = document.cookie.split(';').find(c => c.trim().startsWith('authToken='));
+    const tokenAdmin = document.cookie.split(';').find(c => c.trim().startsWith('superToken='));
 
-    const tokenUser = document.cookie.split(';').find(c => c.trim().startsWith(`authToken=`))
-    const tokenAdmin = document.cookie.split(';').find(c => c.trim().startsWith(`superToken=`))
-    
-    return tokenAdmin !== "" ? tokenAdmin : tokenUser
+    const userToken = tokenUser ? tokenUser.split('=')[1] : '';
+    const adminToken = tokenAdmin ? tokenAdmin.split('=')[1] : '';
+
+    return adminToken || userToken;
 }
 
 API.interceptors.request.use((config) => {

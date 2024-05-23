@@ -278,6 +278,8 @@ app.post('/api/GetPosts', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error'})
     }
 })
+// Specific post endpoint
+// used for post component
 app.post("/api/GetSpecificPost", async (req, res) => {
     try {
         console.log('Received specific post request')
@@ -314,6 +316,7 @@ app.post("/api/GetSpecificPost", async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error'})
     }
 })
+// GET COMMENTS
 app.post("/api/getComments", async (req, res) => {
     try {
         console.log("Received getComments request")
@@ -333,6 +336,7 @@ app.post("/api/getComments", async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error'})
     }
 })
+// CREATE COMMENT
 app.post("/api/createComment", (req, res) => {
     try {
         console.log("Received create comment request")
@@ -353,7 +357,7 @@ app.post("/api/createComment", (req, res) => {
     }
     
 })
-
+// CREATE POST
 app.post('/api/CreatePost', upload.single('picture'), async (req, res) => {
     try {
         console.log("Received Create post")
@@ -392,7 +396,7 @@ app.post('/api/CreatePost', upload.single('picture'), async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error'})
     }
 })
-
+// UPDATE PROFILE
 app.post('/api/UpdateProfile', uploadProfilePicture.single('picture'), async (req, res) => {
     try {
         console.log("Received update request")
@@ -400,18 +404,25 @@ app.post('/api/UpdateProfile', uploadProfilePicture.single('picture'), async (re
         const { userID, userName, passWord, emailAddress } = req.body
         const file = req.file
 
-        const token = req.headers['authorization'] || ''
+        const token = req.headers['authorization'] ? req.headers['authorization'].split(' ')[1] : '';
         if (!token ||!tokenHandler.checkToken(token)){
             res.status(401).json({ error: 'Unauthorized'})
         } 
+        
         const newToken = await tokenHandler.handleRefresh(userID, userName, token)
         
-        const UPDATESQL = "UPDATE USERS WHERE userID = ? SET emailAddress, passWord, profilePicture VALUES (?, ?, ?)"
+        const UPDATESQL = "UPDATE USERS SET emailAddress = ?, passWord = ?, profilePicture = ? WHERE userID = ?";
         const hashedPassWord = await encryptionHandler.encrypt(passWord)
         const profilePicturePath = file ? path.resolve(__dirname, file.filename) : null;
 
-        db.execute(UPDATESQL, [userID, emailAddress, hashedPassWord, profilePicturePath])
-        res.status(200).json({ message: 'Successfully updated profile', token: newToken})
+        db.execute(UPDATESQL, [emailAddress, hashedPassWord, profilePicturePath, userID], (err, results) => {
+            if (err) {
+                console.error('Error updating profile:', err);
+                return res.status(500).json({ error: 'Internal Server Error' });
+            }
+            res.status(200).json({ message: 'Successfully updated profile', token: newToken });
+        });
+
     } catch (error) {
         console.log('FAILURE IN UPDATE PROFILE', error)
         res.status(500).json({ error: 'Internal Server Error'})
