@@ -403,14 +403,15 @@ app.post('/api/UpdateProfile', uploadProfilePicture.single('picture'), async (re
         const { userID, userName, passWord, emailAddress } = req.body;
         const file = req.file;
 
-        let token = req.headers['authorization'];
+        let dirtyToken = req.headers['authorization'];
+        let token = dirtyToken.split(' ')[1]
         console.log('Token:', token);
 
         if (!token || !tokenHandler.checkToken(token)) {
             return res.status(401).json({ error: 'Unauthorized' });
         }
 
-        const newToken = await tokenHandler.handleRefresh(userID, userName, cookie);
+        const newToken = await tokenHandler.handleRefresh(userID, userName, token);
 
         const UPDATESQL = "UPDATE USERS SET emailAddress = ?, passWord = ?, picture = ? WHERE userID = ?";
         const hashedPassWord = await encryptionHandler.encrypt(passWord);
