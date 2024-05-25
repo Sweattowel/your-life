@@ -283,7 +283,7 @@ app.post("/api/GetSpecificPost", async (req, res) => {
     try {
         console.log('Received specific post request')
         const { postID } = req.body
-        const SPECIFICPOSTSQL = 'SELECT * FROM POSTS WHERE postID = ?'
+        const SPECIFICPOSTSQL = 'SELECT title, message, likeCount, dislikeCount FROM POSTS WHERE postID = ?'
         
         db.execute(SPECIFICPOSTSQL, [postID], (err, results) => {
             if (err) {

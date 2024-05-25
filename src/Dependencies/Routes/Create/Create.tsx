@@ -85,7 +85,7 @@ export default function Create()
     };
 
     return (
-        <section className="bg-gradient-to-br from-HIGHLIGHTB to-WHITE text-WHITE ml-[18vw] mt-[5vh] w-[80vw] h-[90vh] shadow-lg">
+        <section className="bg-gradient-to-br from-HIGHLIGHTB to-WHITE text-WHITE margin-auto ml-auto mr-auto flex flex-col w-[80vw] h-[90vh] shadow-lg">
             <h1 className="w-full text-center text-[1.5rem]">
                 Create BlogPost
             </h1>

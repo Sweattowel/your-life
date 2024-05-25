@@ -11,6 +11,8 @@ import Post from './Dependencies/Routes/Post/Post.tsx';
 import Register from './Dependencies/Routes/Profile/Dependencies/AccountHandle/Register.tsx';
 import { ContextProvider } from './ContextProvider/ContextProvider.tsx';
 import Update from './Dependencies/Routes/Profile/Dependencies/AccountHandle/Update.tsx';
+import SQLGEN from './Dependencies/Routes/SQLGEN/SQLGEN.tsx';
+import SQLPRETTYGEN from './Dependencies/Routes/SQLGEN/SQLPRETTYGEN.tsx';
 
 const rootElement: HTMLElement | null = document.getElementById('root');
 
@@ -28,6 +30,8 @@ if (rootElement) {
               <Route path='/Contact' Component={Contact}/>
               <Route path='/posts/user/:userID/userName/:userName/postID/:postID/picture/:picture/page/:page' Component={Post} />
               <Route path='/Profile/Update' Component={Update} />
+              <Route path='/admin/SQLGEN' Component={SQLGEN} />
+              <Route path='/admin/SQLPRETTYGEN' Component={SQLPRETTYGEN} />
             </Routes>
         </Router>
       </ContextProvider>        
