@@ -6,7 +6,8 @@ const links = [
   {path: "/Profile", name: 'Profile', source: "https://www.svgrepo.com/show/43426/profile.svg"},
   {path: "/Create", name: 'Create', source: "https://www.svgrepo.com/show/326595/create-outline.svg"},
   {path: "/Contact", name: 'Contact', source: "https://www.svgrepo.com/show/42700/telemarketer.svg"},
-  {path: "/admin/SQLGEN", name: 'adminSQL', source: "https://www.svgrepo.com/show/42700/telemarketer.svg"}
+  {path: "/admin/SQLGEN", name: 'adminSQL', source: "https://www.svgrepo.com/show/42700/telemarketer.svg"},
+  {path: "/admin/SQLPRETTYGEN", name: 'prettySQL', source: "https://www.svgrepo.com/show/42700/telemarketer.svg"}
 ]
 
 export default function Navigation() {
@@ -18,11 +19,20 @@ export default function Navigation() {
       <h1 className="p-1 text-WHITE text-[2rem] font-serif w-[80%] m-auto text-center">
         Your life
       </h1>
-      <ul className={`h-[3rem] flex flex-row justify-evenly`}>
+      <ul className={`fixed top-[15%] left-[2%] h-[20rem] flex flex-col justify-evenly`}>
         {links.map((link, index) => (
           <li key={index}>
-            <Link onClick={() => setWantSee(false)}  className={`${location.pathname === link.path ? `text-HIGHLIGHTA bg-WHITE shadow shadow-WHITE` : 'text-WHITE bg-HIGHLIGHTA'} flex w-[8rem] h-[2rem] items-center justify-evenly rounded m-auto`} to={`${link.path}`}>
-              <img className={`${location.pathname === link.path ? "stroke-WHITE " : "stroke-HIGHLIGHTB"} h-[60%]`} src={link.source} alt={link.name} /> {link.name}
+            <Link 
+              onClick={() => setWantSee(false)}  
+              className={`${location.pathname === link.path ? `text-HIGHLIGHTA bg-WHITE shadow shadow-BLACK` : 'text-WHITE bg-HIGHLIGHTA'} hover:bg-opacity-60 flex w-[8rem] h-[3rem] items-center justify-evenly rounded m-auto`} 
+              to={`${link.path}`}
+            >
+              <img 
+                className={`${location.pathname === link.path ? "stroke-WHITE " : "stroke-HIGHLIGHTB"} h-[60%]`} 
+                src={link.source} 
+                alt={link.name} 
+              /> 
+              {link.name}
             </Link>
           </li>
         ))}

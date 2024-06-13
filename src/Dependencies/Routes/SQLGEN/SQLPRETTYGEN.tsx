@@ -16,170 +16,242 @@ export default function SQLPRETTYGEN(){
             {
                 tableName: 'USERS', 
                 rows: [
-                    'userName',
-                    'email',
-                    'passWord'
+                    {
+                        rowName: 'userName',
+                        wanted: false
+                    },
+                    {
+                        rowName: 'email',
+                        wanted: false
+                    },
+                    {
+                        rowName: 'passWord',
+                        wanted: false
+                    },
                 ],
             }, 
             {
                 tableName: 'POSTS', 
                 rows: [
-                    'postName',
-                    'postID',
-                    'postPicture'
+                    {
+                        rowName: 'postName',
+                        wanted: false
+                    },
+                    {
+                        rowName: 'postID',
+                        wanted: false
+                    },
+                    {
+                        rowName: 'postPicture',
+                        wanted: false
+                    },
                 ],
             }
         ]
 
     )
-    const [chosenTable, setChosenTable] = useState("")
-    const [wantedRows, setWantedRows] = useState<string[]>([])
-    const [see, setSee] = useState(-1)
-    const [filterGroups, setFilterGroups] = useState<filterGroupsStruc[]>([])
-    useEffect(() => {
-        console.log(wantedRows)
-    }, [wantedRows])
+    const [chosenTable, setChosenTable] = useState<any>({
+        tableName: '', 
+        rows: [],
+    })
+    interface conditionStruc {
+        conditionRow: String,
+        conditionOperand: String,
+        conditionRowSecond: String,
+        isGroup: string
+    }
+    const [conditions, setConditions] = useState<conditionStruc[]>([])
+    const [wantSee, setWantSee] = useState(-1)
+
     return (
-        <section className="flex flex-col bg-HIGHLIGHTB w-[90%] h-[90vh] m-auto mt-2 justify-center items-center">
-            {chosenTable === "" ? (            
-            <div className="flex items-center w-full text-center items-center justify-center">
-                Where From?                     
-                <img onClick={() => {see !== 0 ? setSee(0) : setSee(-1)}} className="h-[1rem] hover:bg-WHITE hover:cursor-pointer rounded-lg " src="https://www.svgrepo.com/show/533144/mouse-alt-1.svg" alt="CLICKER" /> 
-                {see === 0 && 
-                    <menu className="w-[100px] relative d bg-WHITE text-BLACK rounded shadow-lg">
-                        {tables.map((table, index) => (
-                            <p onClick={() => {setChosenTable(table.tableName); setSee(-1)}} className="hover:opacity-60 hover:cursor-pointer" key={index}>
-                                {table.tableName}
-                            </p>
-                        ))}                    
-                    </menu>
-                }               
-            </div>) : (
-                <section>
-                    <h1>
-                        Chosen table: {chosenTable} 
-                    </h1>
-                    <button className="bg-WHITE rounded shadow-lg p-1 m-auto justify-center flex" onClick={() => {setChosenTable('')}}>Switch table?</button>                    
-                    <div>
-                        <h2>
-                            What do you want?
-                        </h2>
-                        {tables.filter((table) => table.tableName !== chosenTable).map((table, index) => (
-                            <div className="bg-WHITE rounded text-center shadow-lg">
-                                {table.rows.map((row, index) => (
-                                    <p className="flex p-1">
-                                        <button 
-                                            className="hover:opacity-60 hover:cursor-pointer w-[70%] border-r"
-                                            onClick={(e) => {{ 
-                                                if (!wantedRows.includes(row)) {
-                                                    setWantedRows((prevRows) => [...prevRows, row])
-                                                } else {
-                                                    setWantedRows((prevRows) => [...prevRows.filter((prevRow) => prevRow !== row)])
-                                                }
-                                            }}}>
-                                                {row}
-                                            </button> 
-                                            <p className="text-center w-[30%]">{wantedRows.includes(row) ? ('Yes') : ('No')}</p>
-                                            
-                                    </p>
-                                ))}
-                            </div>
-                        ))}
-                    </div>
-                    {wantedRows.length > 0 && (
-                        <section>
+        <section className="flex flex-col bg-HIGHLIGHTB w-[90%] h-[90vh] m-auto mt-2 justify-center items-center">   
+            
+            {chosenTable &&             
+                <div className="bg-WHITE w-[20%] p-1 rounded text-center m-2 shadow-lg">
+                    {chosenTable.tableName}    
+                    {chosenTable.rows.map((row, index) => (
+                        <p>
+                            {row.wanted && row.rowName}
+                        </p>
+                    ))}    
+                </div>  
+            }
+     
+            <div className="bg-WHITE rounded-lg p-1 shadow text-center">
+                <h2>
+                    What table?
+                </h2>
+                {tables.map((table:any, index:number) => (
+                    <button onClick={() => setChosenTable(table)} className={`${chosenTable.tableName === table.tableName ? ('bg-WHITE') : ('bg-HIGHLIGHTB')} shadow text-center p-1 w-full hover:cursor hover:opacity-60`}>
+                        {table.tableName}
+                    </button>
+                ))}
+            </div>
+
+            <div className="bg-WHITE rounded-lg p-1 shadow text-center mt-1">
+                {chosenTable && chosenTable.rows.map((row, index) => (
+                    <button 
+                        onClick={
+                            () => 
+                                setChosenTable((prevTable) => ({
+                                    ...prevTable,
+                                    rows: prevTable.rows.map((r) => 
+                                        r.rowName === row.rowName ? { ...r, wanted: !r.wanted} : r
+                                    )
+                                }))
+                        } 
+                        className={`${row.wanted ? ('bg-WHITE') : ('bg-HIGHLIGHTB')} shadow text-center p-1 w-full hover:cursor hover:opacity-60`}>
+                        {row.rowName}
+                    </button>
+                ))}
+            </div>
+            {chosenTable && 
+            <section className="w-[40%]">
+                <div>
+                    {chosenTable.rows.find((r) => r.wanted === true) &&
+                        <div className="bg-WHITE p-1 m-1 rounded text-center shadow">
                             <h2>
-                                + Create filter Group
+                                Add Conditions
                             </h2>
-                            <menu className="w-full flex flex-row justify-evenly mb-2">
-                                <button 
-                                    className="bg-WHITE rounded shadow-lg w-[50%] p-1" 
-                                    onClick={(e) => {
-                                        setFilterGroups((prevGroups) => [...prevGroups, {
-                                            outsideConnection: 'AND',
-                                            comparatorOne: '',
-                                            comparatorTwo: '',
-                                            operand: ''
-                                        }])
-                                }}> 
-                                    AND 
+                            {chosenTable.rows.map((row, index) => (
+                                <button
+                                    onClick={() => setConditions((prevConditions) => 
+                                        [...prevConditions, {conditionRow: row.rowName, conditionOperand: '', conditionRowSecond: '', isGroup: ''}]
+                                    )} 
+                                    className="w-full hover:cursor-pointer hover:opacity-60">
+                                    {row.rowName}
                                 </button>
+                            ))}
+                        </div>            
+                    }                
+                </div>
+
+                <div className="bg-WHITE text-center rounded p-2 m-1 divide-y">
+                {conditions.map((condition, index) => (
+                    <div key={index} className="w-full flex flex-row justify-between">
+                        {condition.isGroup !== '' ? (
+                            <div className="flex flex-row justify-evenly w-full text-center mt-2 mb-2">
+                                <h2>
+                                    {condition.isGroup}
+                                </h2>
                                 <button 
-                                    className="bg-WHITE rounded shadow-lg  w-[50%] p-1" 
-                                    onClick={(e) => {
-                                        setFilterGroups((prevGroups) => [...prevGroups, {
-                                            outsideConnection: 'OR',
-                                            comparatorOne: '',
-                                            comparatorTwo: '',
-                                            operand: ''
-                                        }])
-                                }}> 
-                                    OR 
-                                </button>                                 
-                            </menu>
-                               
-                                {filterGroups.length > 0 && filterGroups.map((group, index) => (
-                                    <section key={index} className="flex flex-col justify-evenly">
-                                        <div className="bg-WHITE w-full flex items-center justify-center">
-                                            <p className="border-r w-[70%] text-center">
-                                                {group.outsideConnection} 
-                                            </p>
-                                            <button className="text-center items-center flex justify-center w-[30%]" onClick={() => {setFilterGroups((prevGroups) => prevGroups.filter((chosenGroup) => chosenGroup === group))}} >-</button>
-                                        </div>
-                                        {group.comparatorOne == "" && group.comparatorTwo == '' && (
-                                            <div>
-                                                <h2 className="text-center">
-                                                    Choose
-                                                </h2>
+                                    onClick={() => setConditions((prevConditions) => prevConditions.filter((con) => con !== conditions[index]))}
+                                    className="w-[20%]"
+                                >
+                                    Remove
+                                </button>
+                            </div>
+ 
+                        ) : (
+                            <section className="w-full flex flex-row justify-between">
+                                <p className="w-[20%]">{condition.conditionRow}</p>
 
-                                                <div className="flex flex-col">
-                                                {tables.filter((table) => table.tableName !== chosenTable).map((table, index) => (
-                                                    <div key={index} className="bg-WHITE rounded text-center shadow-lg">
-                                                        {table.rows.map((row, index) => (
-                                                            <p   
-                                                                className="hover:opacity-60 flex p-1"
-                                                                onClick={() => {{ 
-                                                                if (group.comparatorOne == '') {
-                                                                    group.comparatorOne = row
-                                                                    console.log(group.comparatorOne)
-                                                                } else {
-                                                                    group.comparatorTwo = row
-                                                                    console.log(group.comparatorTwo)
-                                                                }
-                                                            }}}>
-                                                                {row}
-                                                            </p>
-                                                        ))}
-                                                    </div>
-                                                ))}                                                 
-                                                </div>
-                                            </div>
-                                        )}
-                                        {group.comparatorOne && group.comparatorTwo && (
-                                            <div>
-                                                <p className="w-full flex justify-between">
-                                                    <p>{group.comparatorOne}</p>
-                                                    <p>{group.operand || ''}</p>
-                                                    <p>{group.comparatorTwo}</p>
-                                                </p>                          
-                                                <div className="bg-WHITE rounded shadow-lg">
-                                                {operands.map((oper, index) => (
-                                                    <p onClick={() => group.operand === oper} key={index} className="hover:opacity-60 hover:cursor-pointer text-center">
-                                                        {oper}
-                                                    </p>
-                                                ))}                                                  
-                                                </div>                      
-                                                
-                                            </div> 
-                                        )}
+                                <button 
+                                    onClick={() => setWantSee(index !== wantSee ? index : -1)} 
+                                    className="w-[20%]"
+                                >
+                                    {condition.conditionOperand || 'Choose'}
+                                </button>
+
+                                {wantSee !== -1 && wantSee === index && (
+                                    <div className="border fixed z-10 bg-WHITE w-[120px] p-1 flex flex-col rounded">
+                                        {operands.map((operand, operandIndex) => (
+                                            <button 
+                                                key={operandIndex}
+                                                onClick={() => {
+                                                    setConditions((prevConditions) => 
+                                                        prevConditions.map((cond, condIndex) => 
+                                                            condIndex === index ? { ...cond, conditionOperand: operand } : cond
+                                                        )
+                                                    );
+                                                    setWantSee(-1);  // Close the operand selection
+                                                }} 
+                                                className="hover:opacity-60"
+                                            >
+                                                {operand}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+
+                                <input 
+                                    onChange={(e) => {
+                                        setConditions((prevConditions) => 
+                                            prevConditions.map((cond, condIndex) => 
+                                                condIndex === index ? { ...cond, conditionRowSecond: e.target.value } : cond
+                                            )
+                                        );
+                                    }}
+                                    className="w-[20%]" 
+                                    placeholder={`${condition.conditionRowSecond || 'Choose'}`}
+                                />
+                                <button 
+                                    onClick={() => setConditions((prevConditions) => prevConditions.filter((con) => con !== conditions[index]))}
+                                    className="w-[20%]"
+                                >
+                                    Remove
+                                </button>
+                            </section>
+                        )}
+                    </div>
+                ))}
+                    
+                    <div>
+                        <button
+                            onClick={() => {
+                                setConditions((prevConditions) => [
+                                    ...prevConditions,
+                                    {
+                                        conditionRow: '',
+                                        conditionOperand: '',
+                                        conditionRowSecond: '',
+                                        isGroup: 'AND'                                        
+                                    }
+
+                                ])
+                            }}
+                        >
+                            AND
+                        </button>
+                        
+                        <button
+                            onClick={() => {
+                                setConditions((prevConditions) => [
+                                    ...prevConditions,
+                                    {
+                                        conditionRow: '',
+                                        conditionOperand: '',
+                                        conditionRowSecond: '',
+                                        isGroup: 'OR'                                        
+                                    }
+
+                                ])
+                            }}
+                        >
+                            OR
+                        </button>
+                    </div>
+                </div>      
+                          
+            </section>
+
+            
+            }
 
 
-                                    </section>
-                                ))}
-                        </section>
-                    ) }
-                </section>
-            )}
         </section>
     )
 }
+/* Think tank
+
+
+[['SELECT', 'UPDATE'], [], ['FROM'], [], ['WHERE'] [[],['AND'],[,'OR]],]
+
+<Butt>value == this</Butt>
+
+<butt> OR </butt>
+
+<butt> AND</butt>
+
+
+*/
