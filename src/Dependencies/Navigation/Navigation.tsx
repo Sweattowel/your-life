@@ -7,7 +7,8 @@ const links = [
   {path: "/Create", name: 'Create', source: "https://www.svgrepo.com/show/326595/create-outline.svg"},
   {path: "/Contact", name: 'Contact', source: "https://www.svgrepo.com/show/42700/telemarketer.svg"},
   {path: "/admin/SQLGEN", name: 'adminSQL', source: "https://www.svgrepo.com/show/42700/telemarketer.svg"},
-  {path: "/admin/SQLPRETTYGEN", name: 'prettySQL', source: "https://www.svgrepo.com/show/42700/telemarketer.svg"}
+  {path: "/admin/SQLPRETTYGEN", name: 'prettySQL', source: "https://www.svgrepo.com/show/42700/telemarketer.svg"},
+  {path: "/admin/SQLSQUAREGEN", name: 'SQLSQUAREGEN', source: "https://www.svgrepo.com/show/42700/telemarketer.svg"}
 ]
 
 export default function Navigation() {
